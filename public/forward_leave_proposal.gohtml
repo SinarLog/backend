@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+  <title>Document</title>
+  <style type="text/css">
+  </style>
+</head>
+
+<body style="width: 100%; margin: auto 0; padding:0; font-size:18px; color:#33475B; word-break:break-word">
+  <table role="presentation" width="100%"
+    style="border-top-left-radius: 2rem; border-top-right-radius: 2rem; border-bottom: 0.5px solid #33475B; background-color: #f4f4f4; padding: 1rem;">
+    <tr>
+      <td>
+        <img src="cid:sinarlog.png" alt="SinarLog" width="174px" height="47px">
+      </td>
+      <td style="text-align: right;">
+        <h6>Powered by
+          <img src="cid:sinarmas.png" style="width: 6rem;">
+        </h6>
+      </td>
+    </tr>
+  </table>
+  <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0"
+    style="border-bottom-left-radius: 2rem; border-bottom-right-radius: 2rem; background-color: #f4f4f4; padding: 1rem;">
+    <tr width="100%">
+      <td>
+        <h4>Hello, {{.ManagerName}}.</h4>
+        <p style="font-size: medium;">{{.RequesteeName}} has submitted {{.LeaveType}} leave request {{if .From}}from
+          <span style="font-style: italic;color: green;">{{.From}}</span> to
+          <span style="font-style: italic;color: green;">{{.To}}</span>{{else}}on<span
+            style="font-style: italic;color: green;"> {{.At}}</span>{{end}} {{ if .HaveAdditionals}} with an additionals
+          of: {{else}} with the following reason: {{end}}
+        </p>
+        {{if .HaveAdditionals}}
+        <ul>
+          {{range .Additionals}}
+          {{if .LeaveType}}
+          <li>{{.LeaveType}} leave, {{if .From}}{{.From}} to {{.To}}{{else}}{{.At}}{{end}}</li>
+          {{end}}
+          {{end}}
+        </ul>
+        <p>and with the following leave reason:</p>
+        {{end}}
+      </td>
+    </tr>
+    <tr>
+      <td align="center">
+        <pre style="font-style: italic; font-size: medium; max-width: 70%; white-space: pre-wrap;">
+          {{.Reason}}
+        </pre>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <p style="font-size: medium;">Please check in your SinarLog dashboard for "Incoming Leave Proposals" as
+          {{.RequesteeName}}
+          is waiting for your approval on the leave request.</p>
+        <p style="font-size: medium;">If you have any questions, you may directly contact the HR
+          department.</p>
+        <address>
+          Best regards,<br>
+          SinarLog
+        </address>
+      </td>
+    </tr>
+    <tr>
+      <td align="right">
+        <p style="font-style: italic; font-size: small;"><b>This mail is auto generated</b></p>
+      </td>
+    </tr>
+  </table>
+</body>
+
+</html>

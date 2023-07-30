@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+  <title>Document</title>
+  <style type="text/css">
+  </style>
+</head>
+
+<body style="width: 100%; margin: auto 0; padding:0; font-size:18px; color:#33475B; word-break:break-word">
+  <table role="presentation" width="100%"
+    style="border-top-left-radius: 2rem; border-top-right-radius: 2rem; border-bottom: 0.5px solid #33475B; background-color: #f4f4f4; padding: 1rem;">
+    <tr>
+      <td>
+        <img src="cid:sinarlog.png" alt="SinarLog" width="174px" height="47px">
+      </td>
+      <td style="text-align: right;">
+        <h6>Powered by
+          <img src="cid:sinarmas.png" style="width: 6rem;">
+        </h6>
+      </td>
+    </tr>
+  </table>
+  <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0"
+    style="border-bottom-left-radius: 2rem; border-bottom-right-radius: 2rem; background-color: #f4f4f4; padding: 1rem;">
+    <tr role="presentation" width="100%">
+      <td>
+        <h4>Hello {{.FullName}}</h4>
+      </td>
+    </tr>
+    <tr role="presentation" width="100%">
+      <td>
+        <p>We have detected that there is a <span style="text-transform: lowercase;">{{.Action}}</span> attempt. This
+          email would like to ensure that only authorized
+          employees can clock in. Below is your otp code:</p>
+      </td>
+    </tr>
+    <tr role="presentation" width="100%" align="center">
+      <td>
+        <h2
+          style="border-right-style: solid; border-right-width: 1px; border-right-color: 'black'; border-left-style: solid; border-left-width: 1px; border-left-color: 'black'; width: fit-content; padding: 0 1em; cursor: copy;">
+          {{.OTP}}
+        </h2>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <p>This code is only valid for {{.Exp}}. If the OTP expires, you would need to reattempt this process.</p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <p>If you did not initiate this process, please contact our support at <a href="mailto:support@sinarlog.co.id"
+            style="font-style: italic; color: red; font-weight:400;">support@sinarlog.co.id</a> or the HR department.
+          Keep in mind not to
+          share OTP
+          code with anyone.</p>
+        <address>
+          Best regards,<br>
+          SinarLog
+        </address>
+      </td>
+    </tr>
+  </table>
+</body>
+
+</html>

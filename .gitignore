@@ -1,0 +1,22 @@
+# Environments & Credentials
+*.yaml
+.env
+.env.development
+.env.production
+.env.staging
+cert/
+
+# Workspace configuration
+.vscode
+.DS_Store
+tmp/
+
+# Log files
+logs/
+
+# CI/CD
+Jenkinsfile
+
+# Packages
+go.sum
+

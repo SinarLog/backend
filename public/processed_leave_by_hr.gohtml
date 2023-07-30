@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+  <title>Document</title>
+  <style type="text/css">
+  </style>
+</head>
+
+<body style="width: 100%; margin: auto 0; padding:0; font-size:18px; color:#33475B; word-break:break-word">
+  <table role="presentation" width="100%"
+    style="border-top-left-radius: 2rem; border-top-right-radius: 2rem; border-bottom: 0.5px solid #33475B; background-color: #f4f4f4; padding: 1rem;">
+    <tr>
+      <td>
+        <img src="cid:sinarlog.png" alt="SinarLog" width="174px" height="47px">
+      </td>
+      <td style="text-align: right;">
+        <h6>Powered by
+          <img src="cid:sinarmas.png" style="width: 6rem;">
+        </h6>
+      </td>
+    </tr>
+  </table>
+  <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0"
+    style="border-bottom-left-radius: 2rem; border-bottom-right-radius: 2rem; background-color: #f4f4f4; padding: 1rem;">
+    <tr width="100%">
+      <td>
+        <h4>Hello, {{.RequesteeName}}.</h4>
+        <p>We have finished processing your leave request. This mail contains the result of your leave.</p>
+        {{if .Approved}}
+        <p>Your {{.LeaveType}} leave request {{if .From}}from
+          <span style="font-style: italic;color: black; font-weight: 600;">{{.From}}</span> to
+          <span style="font-style: italic;color: black; font-weight: 600;">{{.To}}</span>{{else}}on<span
+            style="font-style: italic;color: black; font-weight: 600;"> {{.At}}</span>{{end}} has been processed and
+          approved. {{if .HaveAdditionals}}Below are the details of your leave overflows:{{end}}
+        </p>
+        {{if .HaveAdditionals}}
+        <ul>
+          {{range .Additionals}}
+          {{if .LeaveType}}
+          <li>{{.LeaveType}} leave request, {{if .From}}from <span
+              style="font-style: italic;color: black; font-weight: 600;">{{.From}}</span> to <span
+              style="font-style: italic;color: black; font-weight: 600;">{{.To}}</span>{{else}}on <span
+              style="font-style: italic;color: black; font-weight: 600;">{{.At}}</span>{{end}} has been {{if
+            .Approved}}approved{{else}}rejected, with reason: {{.Reason}}{{end}}</li>
+          {{end}}
+          {{end}}
+        </ul>
+        {{end}}
+        {{else}}
+        <p>Unfortunately, your {{.LeaveType}} leave request, {{if .From}}from
+          <span style="font-style: italic;color: black; font-weight: 600;">{{.From}}</span> to
+          <span style="font-style: italic;color: black; font-weight: 600;">{{.To}}</span>{{else}}on<span
+            style="font-style: italic;color: black; font-weight: 600;"> {{.At}}</span>{{end}}, {{if .HaveAdditionals}}
+          along with the following
+          additionals leaves related to it:{{else}} have been rejected with the following reason:{{end}}
+        </p>
+        {{if .HaveAdditionals}}
+        <ul>
+          {{range .Additionals}}
+          {{if .LeaveType}}
+          <li>{{.LeaveType}} leave request, {{if .From}}from <span
+              style="font-style: italic;color: black; font-weight: 600;">{{.From}}</span> to <span
+              style="font-style: italic;color: black; font-weight: 600;">{{.To}}</span>{{else}}on <span
+              style="font-style: italic;color: black; font-weight: 600;">{{.At}}</span>{{end}}.</li>
+          {{end}}
+          {{end}}
+        </ul>
+        <p>have been rejected with the following reason:</p>
+        {{end}}
+        {{end}}
+      </td>
+    </tr>
+    {{if .Reason}}
+    <tr>
+      <td align="center">
+        <pre style="font-style: italic; font-size: medium; max-width: 70%; white-space: pre-wrap;">
+          {{.Reason}}
+        </pre>
+      </td>
+    </tr>
+    {{end}}
+    <tr>
+      <td>
+        {{if .Approved}}
+        <p style="font-size: medium;">During your absence, please make sure that all responsibilities have been
+          delegated or completed before your leave.</p>
+        {{end}}
+        <p style="font-size: medium;">If you have any questions, you may directly contact your manager or the HR
+          department.</p>
+
+        <p>Thank you for your cooperation. We look forward to your contributions.</p>
+        <address>
+          Best regards,<br>
+          SinarLog
+        </address>
+      </td>
+    </tr>
+    <tr>
+      <td align="right">
+        <p style="font-style: italic; font-size: small;"><b>This mail is auto generated</b></p>
+      </td>
+    </tr>
+  </table>
+</body>
+
+</html>
