@@ -79,7 +79,7 @@ func Run(cfg *config.Config) {
 	bkt := bucket.GetFirebaseBucket(app_context, cfg.Bucket.BucketName, cfg.Bucket.ServiceAccountPath)
 
 	// Composers .-.
-	serviceComposer := composer.NewServiceComposer(dk, rt, ml, bkt, rdis, nil)
+	serviceComposer := composer.NewServiceComposer(dk, rt, ml, bkt, rdis)
 	repoComposer := composer.NewRepoComposer(pg, rdis, cfg.App.Environment)
 	usecaseComposer := composer.NewUseCaseComposer(repoComposer, serviceComposer)
 
