@@ -17,6 +17,3 @@ logs/
 # CI/CD
 Jenkinsfile
 
-# Packages
-go.sum
-
