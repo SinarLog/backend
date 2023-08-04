@@ -38,7 +38,7 @@ func (repo *credentialRepo) GetEmployeeByIdV2(ctx context.Context, id string) (e
 	if err := repo.db.WithContext(ctx).
 		Model(&employee).
 		Preload("Role").
-		First(&employee, "id = ?", id).Error; err != nil {
+		Take(&employee, "id = ?", id).Error; err != nil {
 		return employee, err
 	}
 

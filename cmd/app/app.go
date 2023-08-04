@@ -74,6 +74,7 @@ func Run(cfg *config.Config) {
 	ml := mailer.GetMailer(
 		mailer.RegisterSenderAddress(cfg.App.MailerEmailAddress),
 		mailer.RegisterSenderPassword(cfg.App.MailerEmailPassword),
+		mailer.RegisterTemplatePath(cfg.App.MailerTemplatePath),
 	)
 
 	// Firebase bucket

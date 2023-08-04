@@ -25,3 +25,11 @@ func RegisterPort(port int) Option {
 		m.port = port
 	}
 }
+
+func RegisterTemplatePath(path string) Option {
+	return func(m *Mailer) {
+		if path != "" {
+			m.TemplatePath = path
+		}
+	}
+}
