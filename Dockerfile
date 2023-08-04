@@ -16,6 +16,7 @@ RUN apk update && apk add --no-cache tzdata
 RUN mkdir logs/
 
 COPY --from=builder /app/sinarlog-app /src/sinarlog-app
+COPY --from=builder /app/public /src/public
 
 ENV TZ=Asia/Jakarta
 ARG GO_ENV=PRODUCTION
