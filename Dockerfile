@@ -5,8 +5,6 @@ WORKDIR /app
 
 COPY . .
 
-RUN mkdir logs/
-
 RUN go mod tidy
 RUN CGO_ENABLED=0 GOOS=linux go build -o sinarlog-app
 
@@ -14,6 +12,8 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o sinarlog-app
 FROM alpine:latest
 
 RUN apk update && apk add --no-cache tzdata
+
+RUN mkdir logs/
 
 COPY --from=builder /app/sinarlog-app /src/sinarlog-app
 
