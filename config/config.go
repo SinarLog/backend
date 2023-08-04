@@ -50,7 +50,7 @@ func (c *Config) load() {
 	// injected before the start of the application.
 	if os.Getenv("GO_ENV") != "PRODUCTION" {
 		// Change the file names as you will
-		err := godotenv.Load(".env.development", ".env", ".env.staging")
+		err := godotenv.Load(".env.development")
 		if err != nil {
 			log.Fatalf("unable to load environment file: %s", err)
 		}

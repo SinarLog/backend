@@ -1,9 +1,7 @@
 # Environments & Credentials
 *.yaml
 .env
-.env.development
-.env.production
-.env.staging
+.env.*
 cert/
 
 # Workspace configuration

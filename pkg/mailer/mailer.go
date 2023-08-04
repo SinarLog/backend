@@ -3,8 +3,6 @@ package mailer
 import (
 	"bytes"
 	"log"
-	"os"
-	"path/filepath"
 	"sync"
 
 	"gopkg.in/gomail.v2"
@@ -26,6 +24,7 @@ type Mailer struct {
 var (
 	_defaultMailerHost = "smtp.gmail.com"
 	_defaultMailerPort = 587
+	_defaultMailerPath = "public"
 )
 
 var (
@@ -37,8 +36,9 @@ func GetMailer(opts ...Option) *Mailer {
 	if mailerSingleInstance == nil {
 		once.Do(func() {
 			mailerSingleInstance = &Mailer{
-				host: _defaultMailerHost,
-				port: _defaultMailerPort,
+				host:         _defaultMailerHost,
+				port:         _defaultMailerPort,
+				TemplatePath: _defaultMailerPath,
 				MessagePool: sync.Pool{
 					New: func() any {
 						message := gomail.NewMessage()
@@ -52,9 +52,6 @@ func GetMailer(opts ...Option) *Mailer {
 					},
 				},
 			}
-
-			wd, _ := os.Getwd()
-			mailerSingleInstance.TemplatePath = filepath.Join(wd, "public/")
 
 			for _, opt := range opts {
 				opt(mailerSingleInstance)

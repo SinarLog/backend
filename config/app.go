@@ -21,6 +21,7 @@ type appConfig struct {
 	DefaultPaginationSize   int
 	MailerEmailAddress      string
 	MailerEmailPassword     string
+	MailerTemplatePath      string
 }
 
 // newServerConfig method    has a Config receiver
@@ -32,6 +33,7 @@ func (c *Config) newAppConfig() {
 		LogPath:             strings.ToLower(os.Getenv("LOG_PATH")),
 		MailerEmailAddress:  strings.ToLower(os.Getenv("MAILER_SENDER_ADDRESS")),
 		MailerEmailPassword: strings.ToLower(os.Getenv("MAILER_SENDER_PASSWORD")),
+		MailerTemplatePath:  strings.ToLower(os.Getenv("MAILER_TEMPLATE_PATH")),
 	}
 
 	defaultPaginationSize, err := strconv.Atoi(os.Getenv("DEFAULT_ROWS_PER_PAGE"))
