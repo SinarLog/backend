@@ -18,8 +18,8 @@ type serverConfig struct {
 // Config.
 func (c *Config) newServerConfig() {
 	s := serverConfig{
-		Host: os.Getenv("SERVER_HOST"),
-		Port: os.Getenv("SERVER_PORT"),
+		Host: os.Getenv("HOST"),
+		Port: os.Getenv("PORT"),
 	}
 
 	if err := s.validate(); err != nil {
