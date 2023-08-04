@@ -17,7 +17,8 @@ type doorkeeperConfig struct {
 
 	SigningMethod string
 	SignSize      string
-	Path          string
+	PubPath       string
+	PrivPath      string
 	Issuer        string
 
 	// --- Password Hasher Config ---
@@ -35,7 +36,8 @@ func (c *Config) newDoorkeeperConfig() {
 	d := doorkeeperConfig{
 		SigningMethod: strings.ToUpper(os.Getenv("DOORKEEPER_SIGNING_METHOD")),
 		SignSize:      strings.ToLower(os.Getenv("DOORKEEPER_SIGN_SIZE")),
-		Path:          strings.ToLower(os.Getenv("DOORKEEPER_CERT_PATH")),
+		PrivPath:      strings.ToLower(os.Getenv("DOORKEEPER_CERT_PRIVATE_PATH")),
+		PubPath:       strings.ToLower(os.Getenv("DOORKEEPER_CERT_PUBLIC_PATH")),
 		Issuer:        strings.ToUpper(os.Getenv("DOORKEEPER_ISSUER")),
 		HashMethod:    strings.ToUpper(os.Getenv("DOORKEEPER_HASH_METHOD")),
 	}
@@ -90,5 +92,6 @@ func (d doorkeeperConfig) validate() error {
 			validation.By(validateEmptyDuration)),
 		validation.Field(&d.AccessDuration, validation.Required, validation.By(validateEmptyDuration)),
 		validation.Field(&d.RefreshDuration, validation.Required, validation.By(validateEmptyDuration)),
+		validation.Field(&d.PrivPath, validation.Required.Error("Please provide a private key as it is required for encryption")),
 	)
 }

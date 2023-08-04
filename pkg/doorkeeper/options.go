@@ -13,9 +13,15 @@ import (
 // Option -.
 type Option func(*Doorkeeper)
 
-func RegisterCertPath(path string) Option {
+func RegisterPrivatePath(path string) Option {
 	return func(d *Doorkeeper) {
-		d.certPath = path
+		d.privPath = path
+	}
+}
+
+func RegisterPublicPath(path string) Option {
+	return func(d *Doorkeeper) {
+		d.pubPath = path
 	}
 }
 

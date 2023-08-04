@@ -56,7 +56,8 @@ func Run(cfg *config.Config) {
 		doorkeeper.RegisterIssuer(cfg.Doorkeeper.Issuer),
 		doorkeeper.RegisterAccessDuration(cfg.Doorkeeper.AccessDuration),
 		doorkeeper.RegisterRefreshDuration(cfg.Doorkeeper.RefreshDuration),
-		doorkeeper.RegisterCertPath(cfg.Doorkeeper.Path),
+		doorkeeper.RegisterPrivatePath(cfg.Doorkeeper.PrivPath),
+		doorkeeper.RegisterPublicPath(cfg.Doorkeeper.PubPath),
 		doorkeeper.RegisterOTPSecretLength(cfg.Doorkeeper.OTPSecretLength),
 		doorkeeper.RegisterOTPExpDuration(cfg.Doorkeeper.OTPExp),
 	)
@@ -79,7 +80,7 @@ func Run(cfg *config.Config) {
 	bkt := bucket.GetFirebaseBucket(app_context, cfg.Bucket.BucketName, cfg.Bucket.ServiceAccountPath)
 
 	// Composers .-.
-	serviceComposer := composer.NewServiceComposer(dk, rt, ml, bkt, rdis, nil)
+	serviceComposer := composer.NewServiceComposer(dk, rt, ml, bkt, rdis)
 	repoComposer := composer.NewRepoComposer(pg, rdis, cfg.App.Environment)
 	usecaseComposer := composer.NewUseCaseComposer(repoComposer, serviceComposer)
 

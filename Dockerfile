@@ -1,19 +1,25 @@
-FROM golang:1.20-bullseye as builder
+# Stage 1: Build the application
+FROM golang:1.20-alpine AS builder
 
 WORKDIR /app
 
 COPY . .
-
-RUN apt update && apt install tzdata -y
 
 RUN mkdir logs/
 
 RUN go mod tidy
 RUN CGO_ENABLED=0 GOOS=linux go build -o sinarlog-app
 
-ENV TZ="Asia/Jakarta"
+# Stage 2: Create the final image
+FROM alpine:latest
+
+RUN apk update && apk add --no-cache tzdata
+
+COPY --from=builder /app/sinarlog-app /src/sinarlog-app
+
+ENV TZ=Asia/Jakarta
 ARG GO_ENV=PRODUCTION
 
 EXPOSE 80
 
-ENTRYPOINT ["/app/sinarlog-app"]
+ENTRYPOINT ["/src/sinarlog-app"]
