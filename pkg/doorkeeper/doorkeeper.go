@@ -27,7 +27,8 @@ import (
 type Doorkeeper struct {
 	// --- JWT ---
 	signMethod      jwt.SigningMethod // This will be used for JWS / JWE
-	certPath        string            // Stores the path to the certification keys
+	privPath        string            // Stores the private key path
+	pubPath         string            // Stores the public key path
 	privKey         interface{}       // Stores the private keys parsed from PEM (if asymmetric)
 	pubKey          interface{}       // Stores the public keys parsed from PEM (if symmetric)
 	issuer          string            // *Claims*
@@ -140,25 +141,22 @@ func (d *Doorkeeper) GetOTPExpDuration() time.Duration {
 func (d *Doorkeeper) loadSecretKeys() {
 	switch d.GetConcreteSignMethod() {
 	case HMAC_SIGN_METHOD_TYPE:
-		d.privKey = d.getSymmetricKeyFromFile("id_secret")
+		d.privKey = d.getSymmetricKeyFromFile(d.privPath)
 		d.pubKey = d.privKey
-	case RSA_SIGN_METHOD_TYPE:
-		privKeyByte, pubKeyByte := d.getAsymmetricKeysFromFile("id_rsa")
-		d.privKey, d.pubKey = d.parseRSAKeysFromPem(privKeyByte, pubKeyByte)
-	case RSAPSS_SIGN_METHOD_TYPE:
-		privKeyByte, pubKeyByte := d.getAsymmetricKeysFromFile("id_rsa")
+	case RSA_SIGN_METHOD_TYPE, RSAPSS_SIGN_METHOD_TYPE:
+		privKeyByte, pubKeyByte := d.getAsymmetricKeysFromFile(d.privPath, d.pubPath)
 		d.privKey, d.pubKey = d.parseRSAKeysFromPem(privKeyByte, pubKeyByte)
 	case ECDSA_SIGN_METHOD_TYPE:
-		privKeyByte, pubKeyByte := d.getAsymmetricKeysFromFile("id_ecdsa")
+		privKeyByte, pubKeyByte := d.getAsymmetricKeysFromFile(d.privPath, d.pubPath)
 		d.privKey, d.pubKey = d.parseECKeysFromPem(privKeyByte, pubKeyByte)
 	case EdDSA_SIGN_METHOD_TYPE:
-		privKeyByte, pubKeyByte := d.getAsymmetricKeysFromFile("id_ed2559")
+		privKeyByte, pubKeyByte := d.getAsymmetricKeysFromFile(d.privPath, d.pubPath)
 		d.privKey, d.pubKey = d.parseEdKeysFromPem(privKeyByte, pubKeyByte)
 	}
 }
 
-func (d *Doorkeeper) getSymmetricKeyFromFile(filename string) []byte {
-	key, err := os.ReadFile(d.certPath + "/" + filename)
+func (d *Doorkeeper) getSymmetricKeyFromFile(path string) []byte {
+	key, err := os.ReadFile(path)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -166,12 +164,12 @@ func (d *Doorkeeper) getSymmetricKeyFromFile(filename string) []byte {
 	return key
 }
 
-func (d *Doorkeeper) getAsymmetricKeysFromFile(filename string) ([]byte, []byte) {
-	privKey, err := os.ReadFile(d.certPath + "/" + filename)
+func (d *Doorkeeper) getAsymmetricKeysFromFile(privPath, pubPath string) ([]byte, []byte) {
+	privKey, err := os.ReadFile(privPath)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	pubKey, err := os.ReadFile(d.certPath + "/" + filename + ".pub")
+	pubKey, err := os.ReadFile(pubPath)
 	if err != nil {
 		log.Fatalln(err)
 	}

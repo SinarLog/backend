@@ -56,7 +56,8 @@ func Run(cfg *config.Config) {
 		doorkeeper.RegisterIssuer(cfg.Doorkeeper.Issuer),
 		doorkeeper.RegisterAccessDuration(cfg.Doorkeeper.AccessDuration),
 		doorkeeper.RegisterRefreshDuration(cfg.Doorkeeper.RefreshDuration),
-		doorkeeper.RegisterCertPath(cfg.Doorkeeper.Path),
+		doorkeeper.RegisterPrivatePath(cfg.Doorkeeper.PrivPath),
+		doorkeeper.RegisterPublicPath(cfg.Doorkeeper.PubPath),
 		doorkeeper.RegisterOTPSecretLength(cfg.Doorkeeper.OTPSecretLength),
 		doorkeeper.RegisterOTPExpDuration(cfg.Doorkeeper.OTPExp),
 	)
