@@ -6,6 +6,7 @@ import (
 
 	impl "sinarlog.com/internal/adapter/repo"
 	"sinarlog.com/internal/app/repo"
+	"sinarlog.com/pkg/mongo"
 	"sinarlog.com/pkg/postgres"
 	"sinarlog.com/pkg/redis"
 )
@@ -27,14 +28,16 @@ type IRepoComposer interface {
 type repoComposer struct {
 	db    *postgres.Postgres
 	redis *redis.RedisClient
+	mongo *mongo.Mongo
 	env   string
 }
 
-func NewRepoComposer(db *postgres.Postgres, rdis *redis.RedisClient, env string) IRepoComposer {
+func NewRepoComposer(db *postgres.Postgres, rdis *redis.RedisClient, mg *mongo.Mongo, env string) IRepoComposer {
 	comp := new(repoComposer)
 	comp.env = env
 	comp.db = db
 	comp.redis = rdis
+	comp.mongo = mg
 
 	switch comp.env {
 	case "PRODUCTION":
