@@ -20,6 +20,11 @@ func NewRouter(r *gin.Engine, logger *logger.AppLogger, ucComposer composer.IUse
 			NewWebsocketController(ws)
 		}
 
+		chat := v2.Group("/chat", middleware.NewMiddleware().AuthMiddleware(ucComposer.CredentialUseCase(), "hr", "mngr", "staff"))
+		{
+			NewChatController(chat, ucComposer.ChatUseCase())
+		}
+
 		pub := v2.Group("/pub")
 		{
 			NewPublicController(pub, ucComposer.JobUseCase(), ucComposer.RoleUseCase(), ucComposer.ConfigUseCase(), ucComposer.CredentialUseCase())

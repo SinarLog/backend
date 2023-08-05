@@ -21,6 +21,7 @@ type IRepoComposer interface {
 	AttendanceRepo() repo.IAttendanceRepo
 	LeaveRepo() repo.ILeaveRepo
 	AnalyticsRepo() repo.IAnalyticsRepo
+	ChatRepo() repo.IChatRepo
 
 	Migrate()
 }
@@ -89,6 +90,10 @@ func (c *repoComposer) LeaveRepo() repo.ILeaveRepo {
 
 func (c *repoComposer) AnalyticsRepo() repo.IAnalyticsRepo {
 	return impl.NewAnalyticsRepo(c.db.ORM)
+}
+
+func (c *repoComposer) ChatRepo() repo.IChatRepo {
+	return impl.NewChatRepo(c.mongo.Conn)
 }
 
 // -------------- Setups --------------

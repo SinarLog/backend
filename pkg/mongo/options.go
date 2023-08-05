@@ -5,6 +5,12 @@ import "time"
 // Option -.
 type Option func(*Mongo)
 
+func ShouldDebug() Option {
+	return func(m *Mongo) {
+		m.debug = true
+	}
+}
+
 // URI -.
 func RegisterURI(uri string) Option {
 	return func(m *Mongo) {

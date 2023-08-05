@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+	"go.mongodb.org/mongo-driver/event"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -28,6 +29,7 @@ type Mongo struct {
 	maxConnAttempts int
 	dbName          string
 	uri             string
+	debug           bool
 	connLifetime    time.Duration
 	Conn            *mongo.Database
 }
@@ -54,15 +56,23 @@ func GetMongoClient(ctx context.Context, opts ...Option) *Mongo {
 }
 
 func (mg *Mongo) connect(ctx context.Context) {
-	client, err := mongo.Connect(
-		ctx,
-		options.Client().
-			ApplyURI(mongoSingleInstance.uri).
-			SetAppName("SinarLog").
-			SetMaxPoolSize(mongoSingleInstance.maxPoolSize).
-			SetMaxConnIdleTime(mongoSingleInstance.connLifetime).
-			SetMaxConnecting(mongoSingleInstance.maxOpenConn),
-	)
+	opts := options.Client().
+		ApplyURI(mongoSingleInstance.uri).
+		SetAppName("SinarLog").
+		SetMaxPoolSize(mongoSingleInstance.maxPoolSize).
+		SetMaxConnIdleTime(mongoSingleInstance.connLifetime).
+		SetMaxConnecting(mongoSingleInstance.maxOpenConn)
+
+	if mg.debug {
+		cmdMonitor := &event.CommandMonitor{
+			Started: func(_ context.Context, evt *event.CommandStartedEvent) {
+				log.Println(evt.Command)
+			},
+		}
+		opts = opts.SetMonitor(cmdMonitor)
+	}
+
+	client, err := mongo.Connect(ctx, opts)
 	if err != nil {
 		log.Fatalf("unable to connect to mongo server: %s", err)
 	}
