@@ -62,7 +62,7 @@ func (c *Config) newMongoConfig() {
 	c.Mongo = d
 
 	// Create dsn
-	dsn := fmt.Sprintf("mongodb://%s:%s", d.host, d.port)
+	dsn := fmt.Sprintf("mongodb://%s:%s/%s", d.host, d.port, d.DbName)
 	u, err := url.Parse(dsn)
 	if err != nil {
 		log.Fatalf("ERROR parsing dsn: %s\n", err)

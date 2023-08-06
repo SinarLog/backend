@@ -3,7 +3,6 @@ package v2
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"sync"
 	"time"
@@ -69,17 +68,6 @@ func init() {
 	hubs = &Hubs{
 		rooms: map[string]*Hub{},
 	}
-
-	t := time.NewTicker(10 * time.Second)
-
-	go func() {
-		for range t.C {
-			log.Printf("CURRENT HUBS STATE\n")
-			for _, hub := range hubs.rooms {
-				log.Printf("%+v", hub)
-			}
-		}
-	}()
 }
 
 func NewChatController(rg *gin.RouterGroup, chatUC usecase.IChatUseCase) {
@@ -173,7 +161,6 @@ func (client *MessengerClient) readMessage(ctx context.Context) {
 
 		chat, err := client.controller.chatUC.StoreMessage(ctx, client.id, client.hub.id, string(message))
 		if err != nil {
-			log.Printf("unable to create chat: %s\n", err)
 			return
 		}
 
@@ -190,7 +177,6 @@ func (client *MessengerClient) sendMessage(ctx context.Context) {
 			client.mu.Lock()
 
 			if err := client.conn.WriteJSON(mapper.MapChatDomainToResponse(chat)); err != nil {
-				log.Printf("unable to write chat json: %s\n", err)
 				return
 			}
 
@@ -224,7 +210,6 @@ func (client *MessengerClient) FindOrCreateHub() *Hub {
 }
 
 func (hub *Hub) spawnWorker() {
-	log.Printf("HUB WORKER with ID %s has spawned...\n", hub.id)
 	for {
 		select {
 		case chat := <-hub.message:
@@ -236,7 +221,6 @@ func (hub *Hub) spawnWorker() {
 				// Destroy hub
 				close(hub.message)
 				delete(hubs.rooms, hub.id)
-				log.Printf("HUB WORKER with ID %s has been stopped...\n", hub.id)
 				return
 			}
 		}
@@ -256,6 +240,6 @@ func (client *MessengerClient) CloseConn() {
 	defer client.mu.Unlock()
 
 	if err := client.conn.Close(); err != nil {
-		log.Fatalf("unable to close conn")
+		return
 	}
 }
