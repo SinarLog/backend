@@ -15,6 +15,7 @@ import (
 	httpserver "sinarlog.com/pkg/http"
 	"sinarlog.com/pkg/logger"
 	"sinarlog.com/pkg/mailer"
+	"sinarlog.com/pkg/mongo"
 	"sinarlog.com/pkg/postgres"
 	"sinarlog.com/pkg/rater"
 	"sinarlog.com/pkg/redis"
@@ -44,6 +45,16 @@ func Run(cfg *config.Config) {
 		redis.RegisterMinIdleConn(cfg.Redis.MinIdleConn),
 		redis.RegisterMaxIdleConn(cfg.Redis.MaxIdleConn),
 		redis.RegisterMaxIdleTime(cfg.Redis.MaxIdleTime),
+	)
+
+	// Mongo
+	mg := mongo.GetMongoClient(
+		app_context,
+		mongo.RegisterURI(cfg.Mongo.URI),
+		mongo.RegisterDbName(cfg.Mongo.DbName),
+		mongo.MaxConn(cfg.Mongo.MaxOpenConn),
+		mongo.MaxPoolSize(cfg.Mongo.MaxPoolSize),
+		mongo.MaxConnLifetime(cfg.Mongo.MaxConnLifetime),
 	)
 
 	// Logger
@@ -82,7 +93,7 @@ func Run(cfg *config.Config) {
 
 	// Composers .-.
 	serviceComposer := composer.NewServiceComposer(dk, rt, ml, bkt, rdis)
-	repoComposer := composer.NewRepoComposer(pg, rdis, cfg.App.Environment)
+	repoComposer := composer.NewRepoComposer(pg, rdis, mg, cfg.App.Environment)
 	usecaseComposer := composer.NewUseCaseComposer(repoComposer, serviceComposer)
 
 	// Http

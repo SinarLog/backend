@@ -15,6 +15,7 @@ import (
 type Config struct {
 	Server     serverConfig
 	Db         dbConfig
+	Mongo 	   mongoConfig
 	App        appConfig
 	Doorkeeper doorkeeperConfig
 	Redis      redisConfig
@@ -59,6 +60,7 @@ func (c *Config) load() {
 	// Register here for your new configs with third-parties.
 	c.newServerConfig()
 	c.newDbConfig()
+	c.newMongoConfig()
 	c.newAppConfig()
 	c.newDoorkeeperConfig()
 	c.newRedisConfig()

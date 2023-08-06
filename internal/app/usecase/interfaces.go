@@ -95,3 +95,8 @@ type IAnalyticsUseCase interface {
 	RetrieveDashboardAnalyticsForEmployeeById(ctx context.Context, employeeId string) (vo.BriefLeaveAndAttendanceAnalytics, error)
 	RetrieveDashboardAnalyticsHr(ctx context.Context) (vo.HrDashboardAnalytics, error)
 }
+
+type IChatUseCase interface {
+	OpenChat(ctx context.Context, user entity.Employee, room entity.Room) (entity.Room, []entity.Chat, error)
+	StoreMessage(ctx context.Context, userId, roomId, message string) (entity.Chat, error)
+}

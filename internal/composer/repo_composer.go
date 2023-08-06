@@ -6,6 +6,7 @@ import (
 
 	impl "sinarlog.com/internal/adapter/repo"
 	"sinarlog.com/internal/app/repo"
+	"sinarlog.com/pkg/mongo"
 	"sinarlog.com/pkg/postgres"
 	"sinarlog.com/pkg/redis"
 )
@@ -20,6 +21,7 @@ type IRepoComposer interface {
 	AttendanceRepo() repo.IAttendanceRepo
 	LeaveRepo() repo.ILeaveRepo
 	AnalyticsRepo() repo.IAnalyticsRepo
+	ChatRepo() repo.IChatRepo
 
 	Migrate()
 }
@@ -27,14 +29,16 @@ type IRepoComposer interface {
 type repoComposer struct {
 	db    *postgres.Postgres
 	redis *redis.RedisClient
+	mongo *mongo.Mongo
 	env   string
 }
 
-func NewRepoComposer(db *postgres.Postgres, rdis *redis.RedisClient, env string) IRepoComposer {
+func NewRepoComposer(db *postgres.Postgres, rdis *redis.RedisClient, mg *mongo.Mongo, env string) IRepoComposer {
 	comp := new(repoComposer)
 	comp.env = env
 	comp.db = db
 	comp.redis = rdis
+	comp.mongo = mg
 
 	switch comp.env {
 	case "PRODUCTION":
@@ -86,6 +90,10 @@ func (c *repoComposer) LeaveRepo() repo.ILeaveRepo {
 
 func (c *repoComposer) AnalyticsRepo() repo.IAnalyticsRepo {
 	return impl.NewAnalyticsRepo(c.db.ORM)
+}
+
+func (c *repoComposer) ChatRepo() repo.IChatRepo {
+	return impl.NewChatRepo(c.mongo.Conn)
 }
 
 // -------------- Setups --------------

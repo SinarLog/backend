@@ -15,6 +15,7 @@ type IUseCaseComposer interface {
 	AttendanceUseCase() usecase.IAttendanceUseCase
 	LeaveUseCase() usecase.ILeaveUseCase
 	AnalyticsUseCase() usecase.IAnalyticsUseCase
+	ChatUseCase() usecase.IChatUseCase
 }
 
 type useCaseComposer struct {
@@ -83,4 +84,8 @@ func (c *useCaseComposer) LeaveUseCase() usecase.ILeaveUseCase {
 
 func (c *useCaseComposer) AnalyticsUseCase() usecase.IAnalyticsUseCase {
 	return usecase.NewAnalyticsUseCase(c.repo.AnalyticsRepo())
+}
+
+func (c *useCaseComposer) ChatUseCase() usecase.IChatUseCase {
+	return usecase.NewChatUseCase(c.repo.ChatRepo(), c.repo.EmployeeRepo())
 }

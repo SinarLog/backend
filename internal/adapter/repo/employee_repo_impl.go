@@ -81,7 +81,7 @@ func (repo *employeeRepo) GetEmployeeFullProfileById(ctx context.Context, id str
 func (repo *employeeRepo) GetEmployeeById(ctx context.Context, id string) (entity.Employee, error) {
 	var employee entity.Employee
 
-	if err := repo.db.WithContext(ctx).Model(&employee).First(&employee, "id = ?", id).Error; err != nil {
+	if err := repo.db.WithContext(ctx).Model(&employee).Take(&employee, "id = ?", id).Error; err != nil {
 		return employee, err
 	}
 	return employee, nil
