@@ -20,15 +20,7 @@ func MapOpenChatResponse(room entity.Room, chats []entity.Chat) dto.OpenChatResp
 	}
 
 	for _, v := range chats {
-		res.Chat = append(res.Chat, dto.ChatResponse{
-			Id:        v.Id.Hex(),
-			RoomId:    v.RoomId.Hex(),
-			Sender:    v.Sender,
-			Message:   v.Message,
-			Read:      v.Read,
-			SentAt:    time.Unix(int64(v.Timestamp.T), 0).In(utils.CURRENT_LOC).Format(time.RFC1123),
-			Timestamp: v.Timestamp.I,
-		})
+		res.Chat = append(res.Chat, MapChatDomainToResponse(v))
 	}
 
 	return res
@@ -37,5 +29,17 @@ func MapOpenChatResponse(room entity.Room, chats []entity.Chat) dto.OpenChatResp
 func MapOpenChatRoomRequestToDomain(req vo.OpenChatRequest) entity.Room {
 	return entity.Room{
 		Participants: []string{req.SenderId, req.RecipientId},
+	}
+}
+
+func MapChatDomainToResponse(chat entity.Chat) dto.ChatResponse {
+	return dto.ChatResponse{
+		Id:        chat.Id.Hex(),
+		RoomId:    chat.RoomId.Hex(),
+		Sender:    chat.Sender,
+		Message:   chat.Message,
+		Read:      chat.Read,
+		SentAt:    time.Unix(int64(chat.Timestamp.T), 0).In(utils.CURRENT_LOC).Format(time.RFC1123),
+		Timestamp: chat.Timestamp.T,
 	}
 }

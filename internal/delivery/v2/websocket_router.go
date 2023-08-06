@@ -28,7 +28,6 @@ func (controller *WebsocketController) connectionHandlers(c *gin.Context) {
 	}
 
 	user := c.Param("id")
-	log.Printf("New client connected for %s\n", user)
 	conn, err := websocket.Upgrade(c.Writer, c.Request, nil, 1024, 1024)
 	if err != nil {
 		controller.UnexpectedError(c, usecase.NewServiceError("Notification", fmt.Errorf("unable to upgrade connection")))
@@ -55,26 +54,22 @@ func (controller *WebsocketController) connectionHandlers(c *gin.Context) {
 	channel := fmt.Sprintf("%s:%s", "app:notif", user)
 	pubsub := rdis.Client.Subscribe(c.Request.Context(), channel)
 	defer pubsub.Close()
-	defer log.Printf("Closing redis subscribtion\n")
-	log.Printf("Subscribing to %s\n", channel)
 	ch := pubsub.Channel()
 
 	for {
 		select {
 		case <-connChan:
 			// This signals that the client disconnected
-			log.Printf("Client of %s disconnected\n", user)
 			if err := conn.Close(); err != nil {
-				log.Printf("Unable to close websocket connection: %s\n", err)
+				log.Fatalf("Unable to close websocket connection: %s\n", err)
 			}
 			return
 		case msg := <-ch:
 			// This signals that there is a message from redis publishers
 			if err := conn.WriteMessage(websocket.TextMessage, []byte(msg.Payload)); err != nil {
-				log.Printf("Unable to send meassage: %s\n", err.Error())
+				log.Fatalf("Unable to send meassage: %s\n", err.Error())
 				return
 			}
-		default:
 		}
 	}
 }

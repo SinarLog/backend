@@ -98,4 +98,5 @@ type IAnalyticsUseCase interface {
 
 type IChatUseCase interface {
 	OpenChat(ctx context.Context, user entity.Employee, room entity.Room) (entity.Room, []entity.Chat, error)
+	StoreMessage(ctx context.Context, userId, roomId, message string) (entity.Chat, error)
 }

@@ -13,4 +13,6 @@ type IChatRepo interface {
 	FindRoom(ctx context.Context, room entity.Room) (entity.Room, error)
 	FindRoomByID(ctx context.Context, id string) (entity.Room, error)
 	GetChatsByRoomId(ctx context.Context, roomId primitive.ObjectID, readerId string) ([]entity.Chat, error)
+
+	CreateNewMessage(ctx context.Context, userId, roomId, message string) (entity.Chat, error)
 }

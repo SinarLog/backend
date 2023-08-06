@@ -20,7 +20,7 @@ func NewChatUseCase(chatRepo repo.IChatRepo, emplRepo repo.IEmployeeRepo) *chatU
 }
 
 func (uc *chatUseCase) OpenChat(ctx context.Context, user entity.Employee, room entity.Room) (entity.Room, []entity.Chat, error) {
-	room, err := uc.openOrCreateRoom(ctx, room)
+	room, err := uc.chatRepo.FindOrCreateRoom(ctx, room)
 	if err != nil {
 		return room, nil, err
 	}
@@ -33,14 +33,15 @@ func (uc *chatUseCase) OpenChat(ctx context.Context, user entity.Employee, room 
 	return room, chats, nil
 }
 
-func (uc *chatUseCase) openOrCreateRoom(ctx context.Context, room entity.Room) (entity.Room, error) {
-	room, err := uc.chatRepo.FindRoom(ctx, room)
-	if err != nil {
-		room, err = uc.chatRepo.CreateRoom(ctx, room)
-		if err != nil {
-			return room, NewRepositoryError("Room", err)
-		}
+func (uc *chatUseCase) StoreMessage(ctx context.Context, userId, roomId, message string) (entity.Chat, error) {
+	if _, err := uc.chatRepo.FindRoomByID(ctx, roomId); err != nil {
+		return entity.Chat{}, NewClientError("Room", err)
 	}
 
-	return room, nil
+	chat, err := uc.chatRepo.CreateNewMessage(ctx, userId, roomId, message)
+	if err != nil {
+		return chat, NewRepositoryError("Chat", err)
+	}
+
+	return chat, nil
 }

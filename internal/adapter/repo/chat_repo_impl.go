@@ -2,12 +2,14 @@ package repo
 
 import (
 	"context"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"sinarlog.com/internal/entity"
+	"sinarlog.com/internal/utils"
 )
 
 type chatRepo struct {
@@ -111,4 +113,31 @@ func (repo *chatRepo) GetChatsByRoomId(ctx context.Context, roomId primitive.Obj
 		return nil, err
 	}
 	return chats, nil
+}
+
+func (repo *chatRepo) CreateNewMessage(ctx context.Context, userId, roomId, message string) (entity.Chat, error) {
+	_id, err := primitive.ObjectIDFromHex(roomId)
+	if err != nil {
+		return entity.Chat{}, err
+	}
+
+	chat := entity.Chat{
+		RoomId:  _id,
+		Sender:  userId,
+		Message: message,
+		Read:    false,
+		Timestamp: primitive.Timestamp{
+			T: uint32(time.Now().In(utils.CURRENT_LOC).Unix()),
+			I: 0,
+		},
+	}
+
+	res, err := repo.chatColl.InsertOne(ctx, chat)
+	if err != nil {
+		return chat, err
+	}
+
+	chat.Id = res.InsertedID.(primitive.ObjectID)
+
+	return chat, nil
 }

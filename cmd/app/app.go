@@ -55,7 +55,6 @@ func Run(cfg *config.Config) {
 		mongo.MaxConn(cfg.Mongo.MaxOpenConn),
 		mongo.MaxPoolSize(cfg.Mongo.MaxPoolSize),
 		mongo.MaxConnLifetime(cfg.Mongo.MaxConnLifetime),
-		mongo.ShouldDebug(),
 	)
 
 	// Logger
