@@ -22,6 +22,10 @@ type appConfig struct {
 	MailerEmailAddress      string
 	MailerEmailPassword     string
 	MailerTemplatePath      string
+
+	// Google Cloud Related
+	GoogleProjectId          string
+	GoogleServiceAccountPath string
 }
 
 // newServerConfig method    has a Config receiver
@@ -32,8 +36,11 @@ func (c *Config) newAppConfig() {
 		Environment:         strings.ToUpper(os.Getenv("ENVIRONMENT")),
 		LogPath:             strings.ToLower(os.Getenv("LOG_PATH")),
 		MailerEmailAddress:  strings.ToLower(os.Getenv("MAILER_SENDER_ADDRESS")),
-		MailerEmailPassword: strings.ToLower(os.Getenv("MAILER_SENDER_PASSWORD")),
 		MailerTemplatePath:  strings.ToLower(os.Getenv("MAILER_TEMPLATE_PATH")),
+		MailerEmailPassword: os.Getenv("MAILER_SENDER_PASSWORD"),
+
+		GoogleProjectId:          os.Getenv("GOOGLE_PROJECT_ID"),
+		GoogleServiceAccountPath: strings.ToLower(os.Getenv("GOOGLE_KEY_PATH")),
 	}
 
 	defaultPaginationSize, err := strconv.Atoi(os.Getenv("DEFAULT_ROWS_PER_PAGE"))

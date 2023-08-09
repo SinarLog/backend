@@ -23,6 +23,7 @@ require (
 	cloud.google.com/go/firestore v1.10.0 // indirect
 	cloud.google.com/go/iam v1.1.0 // indirect
 	cloud.google.com/go/longrunning v0.4.2 // indirect
+	cloud.google.com/go/pubsub v1.33.0 // indirect
 	github.com/MicahParks/keyfunc v1.9.0 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect

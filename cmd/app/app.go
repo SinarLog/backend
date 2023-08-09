@@ -17,6 +17,7 @@ import (
 	"sinarlog.com/pkg/mailer"
 	"sinarlog.com/pkg/mongo"
 	"sinarlog.com/pkg/postgres"
+	"sinarlog.com/pkg/pubsub"
 	"sinarlog.com/pkg/rater"
 	"sinarlog.com/pkg/redis"
 
@@ -88,11 +89,19 @@ func Run(cfg *config.Config) {
 		mailer.RegisterTemplatePath(cfg.App.MailerTemplatePath),
 	)
 
+	// PubSub
+	ps := pubsub.GetPubSubClient(
+		app_context,
+		pubsub.RegisterEnv(os.Getenv("GO_ENV")),
+		pubsub.RegisterProjectId(cfg.App.GoogleProjectId),
+		pubsub.RegisterKey(cfg.App.GoogleServiceAccountPath),
+	)
+
 	// Firebase bucket
 	bkt := bucket.GetFirebaseBucket(app_context, cfg.Bucket.BucketName, cfg.Bucket.ServiceAccountPath)
 
 	// Composers .-.
-	serviceComposer := composer.NewServiceComposer(dk, rt, ml, bkt, rdis)
+	serviceComposer := composer.NewServiceComposer(dk, rt, ml, bkt, rdis, ps)
 	repoComposer := composer.NewRepoComposer(pg, rdis, mg, cfg.App.Environment)
 	usecaseComposer := composer.NewUseCaseComposer(repoComposer, serviceComposer)
 
