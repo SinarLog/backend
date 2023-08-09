@@ -92,7 +92,7 @@ func Run(cfg *config.Config) {
 	// PubSub
 	ps := pubsub.GetPubSubClient(
 		app_context,
-		pubsub.RegisterEnv(os.Getenv("GO_ENV")),
+		pubsub.RegisterEnv(cfg.App.Environment),
 		pubsub.RegisterProjectId(cfg.App.GoogleProjectId),
 		pubsub.RegisterKey(cfg.App.GoogleServiceAccountPath),
 	)
@@ -108,6 +108,7 @@ func Run(cfg *config.Config) {
 	// Http
 	var deliveree *gin.Engine
 	if os.Getenv("GO_ENV") == "PRODUCTION" {
+		gin.SetMode(gin.ReleaseMode)
 		deliveree = gin.New()
 		deliveree.Use(gin.Recovery())
 	} else {

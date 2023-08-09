@@ -40,16 +40,10 @@ func NewRepoComposer(db *postgres.Postgres, rdis *redis.RedisClient, mg *mongo.M
 	comp.redis = rdis
 	comp.mongo = mg
 
-	switch comp.env {
-	case "PRODUCTION":
-		comp.Migrate()
-		comp.Seed()
-	case "DEVELOPMENT":
+	comp.Migrate()
+	comp.Seed()
+	if comp.env == "DEVELOPMENT" {
 		comp.setToDebug()
-	case "MIGRATION":
-		comp.setToDebug()
-		comp.Migrate()
-		comp.Seed()
 	}
 
 	return comp
