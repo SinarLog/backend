@@ -17,30 +17,6 @@ import (
 )
 
 /*
-Concurrent messaging types
-*/
-type Hubs struct {
-	mu    sync.RWMutex
-	rooms map[string]*Hub
-}
-
-type Hub struct {
-	id      string
-	clients map[string]*MessengerClient
-	message chan entity.Chat
-}
-
-type MessengerClient struct {
-	id         string
-	roomId     string
-	hub        *Hub
-	conn       *websocket.Conn
-	mu         sync.Mutex
-	controller *ChatController
-	message    chan entity.Chat
-}
-
-/*
 Controller types
 */
 type ChatController struct {
@@ -48,26 +24,24 @@ type ChatController struct {
 	chatUC usecase.IChatUseCase
 }
 
-var (
-	// Websocket Upgrader
-	upgrader = websocket.Upgrader{
-		HandshakeTimeout:  5 * time.Second,
-		ReadBufferSize:    1024,
-		WriteBufferSize:   1024,
-		EnableCompression: false,
-		Error: func(w http.ResponseWriter, r *http.Request, status int, reason error) {
-			w.WriteHeader(status)
-			fmt.Fprintf(w, "error: %s", reason)
-		},
-	}
-	// Store all the hubs
-	hubs *Hubs
-)
+// Websocket Upgrader
+var upgrader = websocket.Upgrader{
+	HandshakeTimeout:  5 * time.Second,
+	ReadBufferSize:    1024,
+	WriteBufferSize:   1024,
+	EnableCompression: false,
+	Error: func(w http.ResponseWriter, r *http.Request, status int, reason error) {
+		w.WriteHeader(status)
+		fmt.Fprintf(w, "error: %s", reason)
+	},
+}
 
-func init() {
-	hubs = &Hubs{
-		rooms: map[string]*Hub{},
-	}
+type Chatter struct {
+	roomId     string
+	chatterId  string
+	conn       *websocket.Conn
+	mu         sync.Mutex
+	controller *ChatController
 }
 
 func NewChatController(rg *gin.RouterGroup, chatUC usecase.IChatUseCase) {
@@ -117,27 +91,23 @@ func (controller *ChatController) chattingHandler(c *gin.Context) {
 		return
 	}
 
-	// Create the client
-	client := &MessengerClient{
-		id:         userId,
+	chatter := &Chatter{
 		roomId:     roomId,
+		chatterId:  userId,
 		conn:       conn,
 		controller: controller,
-		message:    make(chan entity.Chat),
 	}
 
-	// Find or create the hub
-	hub := client.FindOrCreateHub()
-	client.hub = hub
+	closed := make(chan int)
+	ctx, cancel := context.WithCancel(c.Request.Context())
+	defer cancel()
 
 	// Sender
-	go client.sendMessage(c.Request.Context())
+	go chatter.messageSender(ctx, closed)
 	// Reader
-	go client.readMessage(c.Request.Context())
+	go chatter.messageListener(ctx)
 
-	for range c.Done() {
-		return
-	}
+	<-closed
 }
 
 /*
@@ -145,7 +115,7 @@ func (controller *ChatController) chattingHandler(c *gin.Context) {
 SOCKET MANAGEMENT HELPERS
 ***************************
 */
-func (client *MessengerClient) readMessage(ctx context.Context) {
+func (client *Chatter) messageSender(ctx context.Context, closeChan chan int) {
 	for {
 		_, message, err := client.conn.ReadMessage()
 		if ce, ok := err.(*websocket.CloseError); ok {
@@ -153,89 +123,42 @@ func (client *MessengerClient) readMessage(ctx context.Context) {
 			case websocket.CloseNormalClosure, websocket.CloseGoingAway, websocket.CloseNoStatusReceived:
 				// Close conn
 				client.CloseConn()
-				// Unsubscribe to hub
-				client.UnsubscribeToHub()
+				// Unregister client
+				client.controller.chatUC.DetachListener(ctx, client.chatterId, client.roomId)
+				// Let the subscriber goroutine know
+				closeChan <- 1
 				return
 			}
 		}
 
-		chat, err := client.controller.chatUC.StoreMessage(ctx, client.id, client.hub.id, string(message))
+		_, err = client.controller.chatUC.SendMessage(ctx, client.chatterId, client.roomId, string(message))
 		if err != nil {
-			return
+			client.conn.WriteJSON(err)
 		}
-
-		client.hub.message <- chat
 	}
 }
 
-func (client *MessengerClient) sendMessage(ctx context.Context) {
+func (client *Chatter) messageListener(ctx context.Context) {
+	channel := make(chan entity.Chat)
+
+	go func(ctx context.Context, channel chan entity.Chat) {
+		if err := client.controller.chatUC.ListenMessage(ctx, client.chatterId, client.roomId, channel); err != nil {
+			client.conn.WriteJSON(err)
+			return
+		}
+	}(ctx, channel)
+
 	for {
 		select {
 		case <-ctx.Done():
 			return
-		case chat := <-client.message:
-			client.mu.Lock()
-
-			if err := client.conn.WriteJSON(mapper.MapChatDomainToResponse(chat)); err != nil {
-				return
-			}
-
-			client.mu.Unlock()
+		case chat := <-channel:
+			client.conn.WriteJSON(mapper.MapChatDomainToResponse(chat))
 		}
 	}
 }
 
-func (client *MessengerClient) FindOrCreateHub() *Hub {
-	hubs.mu.Lock()
-	defer hubs.mu.Unlock()
-
-	hub, found := hubs.rooms[client.roomId]
-	if !found {
-		hub = &Hub{
-			id:      client.roomId,
-			clients: map[string]*MessengerClient{},
-			message: make(chan entity.Chat, 3),
-		}
-
-		hub.clients[client.id] = client
-		hubs.rooms[client.roomId] = hub
-
-		// Spawn goroutine for the hub
-		go hub.spawnWorker()
-	} else {
-		hub.clients[client.id] = client
-	}
-
-	return hub
-}
-
-func (hub *Hub) spawnWorker() {
-	for {
-		select {
-		case chat := <-hub.message:
-			for _, client := range hub.clients {
-				client.message <- chat
-			}
-		default:
-			if len(hub.clients) == 0 {
-				// Destroy hub
-				close(hub.message)
-				delete(hubs.rooms, hub.id)
-				return
-			}
-		}
-	}
-}
-
-func (client *MessengerClient) UnsubscribeToHub() {
-	hubs.mu.Lock()
-	defer hubs.mu.Unlock()
-
-	hub := hubs.rooms[client.roomId]
-	delete(hub.clients, client.id)
-}
-
-func (client *MessengerClient) CloseConn() {
+func (client *Chatter) CloseConn() {
 	client.mu.Lock()
 	defer client.mu.Unlock()
 

@@ -6,6 +6,7 @@ import (
 	"sinarlog.com/pkg/bucket"
 	"sinarlog.com/pkg/doorkeeper"
 	"sinarlog.com/pkg/mailer"
+	"sinarlog.com/pkg/pubsub"
 	"sinarlog.com/pkg/rater"
 	"sinarlog.com/pkg/redis"
 )
@@ -16,6 +17,7 @@ type IServiceComposer interface {
 	MailerService() service.IMailerService
 	BucketService() service.IBucketService
 	NotifService() service.INotifService
+	PubSubService() service.IPubSubService
 }
 
 type serviceComposer struct {
@@ -24,10 +26,25 @@ type serviceComposer struct {
 	ml   *mailer.Mailer
 	bkt  *bucket.Bucket
 	rdis *redis.RedisClient
+	ps   *pubsub.PubSub
 }
 
-func NewServiceComposer(dk *doorkeeper.Doorkeeper, rt *rater.Rater, ml *mailer.Mailer, bkt *bucket.Bucket, rdis *redis.RedisClient) IServiceComposer {
-	s := &serviceComposer{dk: dk, rt: rt, ml: ml, bkt: bkt, rdis: rdis}
+func NewServiceComposer(
+	dk *doorkeeper.Doorkeeper,
+	rt *rater.Rater,
+	ml *mailer.Mailer,
+	bkt *bucket.Bucket,
+	rdis *redis.RedisClient,
+	ps *pubsub.PubSub,
+) IServiceComposer {
+	s := &serviceComposer{
+		dk:   dk,
+		rt:   rt,
+		ml:   ml,
+		bkt:  bkt,
+		rdis: rdis,
+		ps:   ps,
+	}
 
 	return s
 }
@@ -50,4 +67,8 @@ func (s *serviceComposer) BucketService() service.IBucketService {
 
 func (s *serviceComposer) NotifService() service.INotifService {
 	return impl.NewNotifService(s.rdis.Client)
+}
+
+func (s *serviceComposer) PubSubService() service.IPubSubService {
+	return impl.NewPubSubService(s.ps.Client)
 }

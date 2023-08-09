@@ -74,6 +74,7 @@ func (c *Config) newRedisConfig() {
 
 func (r redisConfig) validate() error {
 	return validation.ValidateStruct(&r,
+		validation.Field(&r.Password, validation.Required),
 		validation.Field(&r.Db, validation.Max(15), validation.Min(0)),
 		validation.Field(&r.ReadTimeout, validation.By(validateEmptyDuration)),
 		validation.Field(&r.WriteTimeout, validation.By(validateEmptyDuration)),

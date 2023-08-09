@@ -62,7 +62,7 @@ func (c *Config) newMongoConfig() {
 	c.Mongo = d
 
 	// Create dsn
-	dsn := fmt.Sprintf("mongodb://%s:%s/%s", d.host, d.port, d.DbName)
+	dsn := fmt.Sprintf("mongodb://%s:%s/%s?authSource=admin", d.host, d.port, d.DbName)
 	u, err := url.Parse(dsn)
 	if err != nil {
 		log.Fatalf("ERROR parsing dsn: %s\n", err)
@@ -78,8 +78,8 @@ func (d mongoConfig) validate() error {
 	return validation.ValidateStruct(&d,
 		validation.Field(&d.host, validation.Required, is.Host),
 		validation.Field(&d.port, validation.Required, is.Port.Error("unrecognised port for mongo")),
-		// validation.Field(&d.user, validation.Required),
-		// validation.Field(&d.password, validation.Required),
+		validation.Field(&d.user, validation.Required),
+		validation.Field(&d.password, validation.Required),
 		validation.Field(&d.MaxConnLifetime, validation.Required),
 		validation.Field(&d.DbName, validation.Required.Error("please provide a mongo db name")),
 		validation.Field(&d.MaxOpenConn, validation.Required),

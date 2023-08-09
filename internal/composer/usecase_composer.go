@@ -87,5 +87,5 @@ func (c *useCaseComposer) AnalyticsUseCase() usecase.IAnalyticsUseCase {
 }
 
 func (c *useCaseComposer) ChatUseCase() usecase.IChatUseCase {
-	return usecase.NewChatUseCase(c.repo.ChatRepo(), c.repo.EmployeeRepo())
+	return usecase.NewChatUseCase(c.repo.ChatRepo(), c.repo.EmployeeRepo(), c.service.PubSubService())
 }
