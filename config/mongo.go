@@ -37,23 +37,29 @@ func (c *Config) newMongoConfig() {
 		DbName:   os.Getenv("MONGO_NAME"),
 	}
 
-	maxPoolSize, err := strconv.Atoi(os.Getenv("MONGO_MAX_OPEN_CONN"))
-	if err != nil {
-		log.Fatalf("Unable to parse mongo pool size %s\n", err)
+	if x := os.Getenv("MONGO_MAX_OPEN_CONN"); x != "" {
+		maxPoolSize, err := strconv.Atoi(x)
+		if err != nil {
+			log.Fatalf("Unable to parse mongo pool size %s\n", err)
+		}
+		d.MaxPoolSize = maxPoolSize
 	}
-	d.MaxPoolSize = maxPoolSize
 
-	maxOpenConn, err := strconv.Atoi(os.Getenv("MONGO_MAX_POOL_SIZE"))
-	if err != nil {
-		log.Fatalf("Unable to parse mongo open conn %s\n", err)
+	if x := os.Getenv("MONGO_MAX_POOL_SIZE"); x != "" {
+		maxOpenConn, err := strconv.Atoi(x)
+		if err != nil {
+			log.Fatalf("Unable to parse mongo open conn %s\n", err)
+		}
+		d.MaxOpenConn = maxOpenConn
 	}
-	d.MaxOpenConn = maxOpenConn
 
-	maxConnLifetime, err := time.ParseDuration(os.Getenv("MONGO_MAX_CONN_LIFETIME"))
-	if err != nil {
-		log.Fatalf("Unable to parse mongo conn lifetime %s\n", err)
+	if x := os.Getenv("MONGO_MAX_CONN_LIFETIME"); x != "" {
+		maxConnLifetime, err := time.ParseDuration(x)
+		if err != nil {
+			log.Fatalf("Unable to parse mongo conn lifetime %s\n", err)
+		}
+		d.MaxConnLifetime = maxConnLifetime
 	}
-	d.MaxConnLifetime = maxConnLifetime
 
 	if err := d.validate(); err != nil {
 		log.Fatalf("%s", err)
@@ -76,13 +82,10 @@ func (c *Config) newMongoConfig() {
 // such that in matches the expected conditions.
 func (d mongoConfig) validate() error {
 	return validation.ValidateStruct(&d,
-		validation.Field(&d.host, validation.Required, is.Host),
-		validation.Field(&d.port, validation.Required, is.Port.Error("unrecognised port for mongo")),
-		validation.Field(&d.user, validation.Required),
-		validation.Field(&d.password, validation.Required),
-		validation.Field(&d.MaxConnLifetime, validation.Required),
-		validation.Field(&d.DbName, validation.Required.Error("please provide a mongo db name")),
-		validation.Field(&d.MaxOpenConn, validation.Required),
-		validation.Field(&d.MaxPoolSize, validation.Required),
+		validation.Field(&d.host, validation.Required, is.Host.Error("(mongoConfig).validate: unrecognised host for mongo")),
+		validation.Field(&d.port, validation.Required, is.Port.Error("(mongoConfig).validate: unrecognised port for mongo")),
+		validation.Field(&d.user, validation.Required.Error("(mongoConfig).validate: mongodb username is required for security reason")),
+		validation.Field(&d.password, validation.Required.Error("(mongoConfig).validate: mongodb password is required for security reason")),
+		validation.Field(&d.DbName, validation.Required.Error("(mongoConfig).validate: please provide a mongo db name")),
 	)
 }

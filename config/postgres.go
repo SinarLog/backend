@@ -38,23 +38,29 @@ func (c *Config) newDbConfig() {
 		password: os.Getenv("DB_PASSWORD"),
 	}
 
-	maxPoolSize, err := strconv.Atoi(os.Getenv("DB_MAX_OPEN_CONN"))
-	if err != nil {
-		log.Fatalf("Unable to parse postgres pool size %s\n", err)
+	if x := os.Getenv("DB_MAX_OPEN_CONN"); x != "" {
+		maxPoolSize, err := strconv.Atoi(x)
+		if err != nil {
+			log.Fatalf("Unable to parse postgres pool size %s\n", err)
+		}
+		d.MaxPoolSize = maxPoolSize
 	}
-	d.MaxPoolSize = maxPoolSize
 
-	maxOpenConn, err := strconv.Atoi(os.Getenv("DB_MAX_POOL_SIZE"))
-	if err != nil {
-		log.Fatalf("Unable to parse postgres open conn %s\n", err)
+	if x := os.Getenv("DB_MAX_POOL_SIZE"); x != "" {
+		maxOpenConn, err := strconv.Atoi(x)
+		if err != nil {
+			log.Fatalf("Unable to parse postgres open conn %s\n", err)
+		}
+		d.MaxOpenConn = maxOpenConn
 	}
-	d.MaxOpenConn = maxOpenConn
 
-	maxConnLifetime, err := time.ParseDuration(os.Getenv("DB_MAX_CONN_LIFETIME"))
-	if err != nil {
-		log.Fatalf("Unable to parse postgres conn lifetime %s\n", err)
+	if x := os.Getenv("DB_MAX_CONN_LIFETIME"); x != "" {
+		maxConnLifetime, err := time.ParseDuration(x)
+		if err != nil {
+			log.Fatalf("Unable to parse postgres conn lifetime %s\n", err)
+		}
+		d.MaxConnLifetime = maxConnLifetime
 	}
-	d.MaxConnLifetime = maxConnLifetime
 
 	if err := d.validate(); err != nil {
 		log.Fatalf("%s", err)
@@ -77,13 +83,10 @@ func (c *Config) newDbConfig() {
 // such that in matches the expected conditions.
 func (d dbConfig) validate() error {
 	return validation.ValidateStruct(&d,
-		validation.Field(&d.host, validation.Required, is.Host),
-		validation.Field(&d.port, validation.Required, is.Port.Error("hello world")),
-		validation.Field(&d.user, validation.Required),
-		validation.Field(&d.name, validation.Required),
-		validation.Field(&d.password, validation.Required),
-		validation.Field(&d.MaxConnLifetime, validation.Required),
-		validation.Field(&d.MaxOpenConn, validation.Required),
-		validation.Field(&d.MaxPoolSize, validation.Required),
+		validation.Field(&d.host, validation.Required, is.Host.Error("(dbConfig).validate: unrecognised host for db")),
+		validation.Field(&d.port, validation.Required, is.Port.Error("(dbConfig).validate: unrecognised port for db")),
+		validation.Field(&d.user, validation.Required.Error("(dbConfig).validate: db user is required for security reason")),
+		validation.Field(&d.password, validation.Required.Error("(dbConfig).validate: db password is required for security reason")),
+		validation.Field(&d.name, validation.Required.Error("(dbConfig).validate: please provide a db name")),
 	)
 }

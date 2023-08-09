@@ -35,35 +35,45 @@ func (c *Config) newRedisConfig() {
 	}
 	r.Db = db
 
-	readTimeout, err := time.ParseDuration(os.Getenv("REDIS_READ_TIMEOUT"))
-	if err != nil {
-		log.Fatalf("Unable to parse redis readtimeout %s\n", err)
+	if x := os.Getenv("REDIS_READ_TIMEOUT"); x != "" {
+		readTimeout, err := time.ParseDuration(x)
+		if err != nil {
+			log.Fatalf("Unable to parse redis readtimeout %s\n", err)
+		}
+		r.ReadTimeout = readTimeout
 	}
-	r.ReadTimeout = readTimeout
 
-	writeTimout, err := time.ParseDuration(os.Getenv("REDIS_WRITE_TIMEOUT"))
-	if err != nil {
-		log.Fatalf("Unable to parse redis writetimeout %s\n", err)
+	if x := os.Getenv("REDIS_WRITE_TIMEOUT"); x != "" {
+		writeTimout, err := time.ParseDuration(x)
+		if err != nil {
+			log.Fatalf("Unable to parse redis writetimeout %s\n", err)
+		}
+		r.WriteTimeout = writeTimout
 	}
-	r.WriteTimeout = writeTimout
 
-	minIdleConn, err := strconv.Atoi(os.Getenv("REDIS_MIN_IDLE_CONN"))
-	if err != nil {
-		log.Fatalf("Unable to parse redis min idle conn %s\n", err)
+	if x := os.Getenv("REDIS_MIN_IDLE_CONN"); x != "" {
+		minIdleConn, err := strconv.Atoi(x)
+		if err != nil {
+			log.Fatalf("Unable to parse redis min idle conn %s\n", err)
+		}
+		r.MinIdleConn = minIdleConn
 	}
-	r.MinIdleConn = minIdleConn
 
-	maxIdleConn, err := strconv.Atoi(os.Getenv("REDIS_MAX_IDLE_CONN"))
-	if err != nil {
-		log.Fatalf("Unable to parse redis max idle conn %s\n", err)
+	if x := os.Getenv("REDIS_MAX_IDLE_CONN"); x != "" {
+		maxIdleConn, err := strconv.Atoi(x)
+		if err != nil {
+			log.Fatalf("Unable to parse redis max idle conn %s\n", err)
+		}
+		r.MaxIdleConn = maxIdleConn
 	}
-	r.MaxIdleConn = maxIdleConn
 
-	maxIdleTime, err := time.ParseDuration(os.Getenv("REDIS_MAX_IDLE_TIME"))
-	if err != nil {
-		log.Fatalf("Unable to parse redis max idle time %s\n", err)
+	if x := os.Getenv("REDIS_MAX_IDLE_TIME"); x != "" {
+		maxIdleTime, err := time.ParseDuration(x)
+		if err != nil {
+			log.Fatalf("Unable to parse redis max idle time %s\n", err)
+		}
+		r.MaxIdleTime = maxIdleTime
 	}
-	r.MaxIdleTime = maxIdleTime
 
 	if err := r.validate(); err != nil {
 		log.Fatalf("FATAL - %s", err)
@@ -74,10 +84,7 @@ func (c *Config) newRedisConfig() {
 
 func (r redisConfig) validate() error {
 	return validation.ValidateStruct(&r,
-		validation.Field(&r.Password, validation.Required),
-		validation.Field(&r.Db, validation.Max(15), validation.Min(0)),
-		validation.Field(&r.ReadTimeout, validation.By(validateEmptyDuration)),
-		validation.Field(&r.WriteTimeout, validation.By(validateEmptyDuration)),
-		validation.Field(&r.MaxIdleConn, validation.By(validateEmptyDuration)),
+		validation.Field(&r.Password, validation.Required.Error("(redisConfig).validate: redis password is required for security reason")),
+		validation.Field(&r.Db, validation.Max(15).Error("(redisConfig.validate: invalid redis db index)"), validation.Min(0).Error("(redisConfig.validate: invalid redis db index)")),
 	)
 }

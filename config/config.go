@@ -15,7 +15,7 @@ import (
 type Config struct {
 	Server     serverConfig
 	Db         dbConfig
-	Mongo 	   mongoConfig
+	Mongo      mongoConfig
 	App        appConfig
 	Doorkeeper doorkeeperConfig
 	Redis      redisConfig
@@ -47,9 +47,9 @@ func GetConfig() *Config {
 // only be called during the creational of a new config instance.
 // It is also the place to register your configs.
 func (c *Config) load() {
-	// All environments during production must be
+	// All environments during production or testing must be
 	// injected before the start of the application.
-	if os.Getenv("GO_ENV") != "PRODUCTION" {
+	if os.Getenv("GO_ENV") == "DEVELOPMENT" {
 		// Change the file names as you will
 		err := godotenv.Load(".env.development")
 		if err != nil {
