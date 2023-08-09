@@ -33,7 +33,7 @@ func (c *Config) newServerConfig() {
 // values such that it meets the requirements.
 func (d serverConfig) validate() error {
 	return validation.ValidateStruct(&d,
-		validation.Field(&d.Host, validation.When(d.Host != "", validation.Required, is.Host)),
-		validation.Field(&d.Port, validation.Required, is.Port),
+		validation.Field(&d.Host, validation.When(d.Host != "", validation.Required, is.Host.Error("(serverConfig).validate: unrecognised host for server"))),
+		validation.Field(&d.Port, validation.Required, is.Port.Error("(serverConfig).validate: unrecognised port for server")),
 	)
 }

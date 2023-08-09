@@ -33,7 +33,7 @@ type appConfig struct {
 // Config.
 func (c *Config) newAppConfig() {
 	a := appConfig{
-		Environment:         strings.ToUpper(os.Getenv("ENVIRONMENT")),
+		Environment:         strings.ToUpper(os.Getenv("GO_ENV")),
 		LogPath:             strings.ToLower(os.Getenv("LOG_PATH")),
 		MailerEmailAddress:  strings.ToLower(os.Getenv("MAILER_SENDER_ADDRESS")),
 		MailerTemplatePath:  strings.ToLower(os.Getenv("MAILER_TEMPLATE_PATH")),
