@@ -7,6 +7,7 @@ import (
 
 	"cloud.google.com/go/pubsub"
 	"google.golang.org/api/option"
+	"sinarlog.com/config"
 )
 
 var (
@@ -48,7 +49,7 @@ func GetPubSubClient(ctx context.Context, options ...Option) *PubSub {
 
 func (psInstance *PubSub) connect(ctx context.Context) {
 	switch psInstance.env {
-	case "PRODUCTION":
+	case config.PRODUCTION:
 		client, err := pubsub.NewClient(ctx, psInstance.projectId)
 		if err != nil {
 			log.Fatalf("unable to create pubsub client: %s\n", err)
@@ -57,7 +58,7 @@ func (psInstance *PubSub) connect(ctx context.Context) {
 		psInstance.Client = client
 	default:
 		if psInstance.keyPath == "" {
-			log.Fatalln("DEVELOPMENT mode for pubsub requires a service account path...")
+			log.Fatalln("development mode for pubsub requires a service account path...")
 		}
 
 		opt := option.WithCredentialsFile(psInstance.keyPath)
