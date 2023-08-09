@@ -107,7 +107,7 @@ func Run(cfg *config.Config) {
 
 	// Http
 	var deliveree *gin.Engine
-	if os.Getenv("GO_ENV") == "PRODUCTION" {
+	if os.Getenv("GO_ENV") == config.PRODUCTION {
 		gin.SetMode(gin.ReleaseMode)
 		deliveree = gin.New()
 		deliveree.Use(gin.Recovery())

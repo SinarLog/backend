@@ -1,6 +1,6 @@
 package pubsub
 
-import "log"
+import "sinarlog.com/config"
 
 // Option -.
 type Option func(*PubSub)
@@ -15,10 +15,12 @@ func RegisterEnv(env string) Option {
 // SetServiceAccountPath (only for development)
 func RegisterKey(path string) Option {
 	return func(ps *PubSub) {
-		if ps.env == "PRODUCTION" {
-			log.Fatalln("reading key as json is not allowed in production")
+		switch ps.env {
+		case config.DEVELOPMENT:
+			ps.keyPath = path
+		case config.TESTING:
+			ps.keyPath = path
 		}
-		ps.keyPath = path
 	}
 }
 

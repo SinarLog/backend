@@ -27,6 +27,13 @@ var (
 	cfgSingleInstance *Config
 )
 
+const (
+	PRODUCTION  string = "PRODUCTION"
+	STAGING     string = "STAGING"
+	TESTING     string = "TESTING"
+	DEVELOPMENT string = "DEVELOPMENT"
+)
+
 // GetConfig function    either returns an already created
 // config instance or creates a new config instance if there
 // is none existing yet.
