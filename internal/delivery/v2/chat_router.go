@@ -70,7 +70,7 @@ func (controller *ChatController) openRoomChatHandler(c *gin.Context) {
 		return
 	}
 
-	controller.OkWithPage(c, mapper.MapOpenChatResponse(room, chats))
+	controller.Ok(c, mapper.MapOpenChatResponse(room, chats))
 }
 
 func (controller *ChatController) chattingHandler(c *gin.Context) {
