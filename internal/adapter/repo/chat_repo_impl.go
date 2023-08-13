@@ -39,7 +39,7 @@ func (repo *chatRepo) FindOrCreateRoom(ctx context.Context, room entity.Room) (e
 func (repo *chatRepo) FindRoom(ctx context.Context, room entity.Room) (entity.Room, error) {
 	if err := repo.roomColl.FindOne(ctx, bson.D{
 		{Key: "participants", Value: bson.D{
-			{Key: "$all", Value: bson.A{room.Participants}},
+			{Key: "$all", Value: room.Participants},
 		}},
 	}).Decode(&room); err != nil {
 		return room, err
@@ -79,7 +79,7 @@ func (repo *chatRepo) GetChatsByRoomId(ctx context.Context, roomId primitive.Obj
 
 	cursor, err := repo.chatColl.Find(ctx,
 		bson.D{{Key: "roomId", Value: roomId}},
-		options.Find().SetSort(bson.D{{Key: "timestamp", Value: -1}}),
+		options.Find().SetSort(bson.D{{Key: "timestamp", Value: 1}}),
 		options.Find().SetLimit(30),
 	)
 	if err != nil {

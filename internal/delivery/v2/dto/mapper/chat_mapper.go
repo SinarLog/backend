@@ -16,11 +16,11 @@ func MapOpenChatResponse(room entity.Room, chats []entity.Chat) dto.OpenChatResp
 			Participants: room.Participants,
 			CreatedAt:    room.CreatedAt.Time().In(utils.CURRENT_LOC).Format(time.RFC1123),
 		},
-		Chat: []dto.ChatResponse{},
+		Chats: []dto.ChatResponse{},
 	}
 
 	for _, v := range chats {
-		res.Chat = append(res.Chat, MapChatDomainToResponse(v))
+		res.Chats = append(res.Chats, MapChatDomainToResponse(v))
 	}
 
 	return res
@@ -42,4 +42,15 @@ func MapChatDomainToResponse(chat entity.Chat) dto.ChatResponse {
 		SentAt:    time.Unix(int64(chat.Timestamp.T), 0).In(utils.CURRENT_LOC).Format(time.RFC1123),
 		Timestamp: chat.Timestamp.T,
 	}
+}
+
+func MapFriendsList(friends []entity.Employee, userId string) []dto.BriefEmployeeListResponse {
+	for i, v := range friends {
+		if v.Id == userId {
+			friends = append(friends[:i], friends[i+1:]...)
+			break
+		}
+	}
+
+	return MapEmployeeListToBriefEmployeeListResponse(friends)
 }

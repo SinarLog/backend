@@ -46,14 +46,6 @@ func init() {
 			}
 		}
 	}()
-
-	go func() {
-		for range t.C {
-			for _, v := range psService.collections {
-				fmt.Printf("%+v", v.clients)
-			}
-		}
-	}()
 }
 
 func NewPubSubService(ps *pubsub.Client) *pubsubService {
@@ -97,7 +89,9 @@ func (service *pubsubService) PublishChat(ctx context.Context, topicId string, p
 // a topic (in this case is a room) and will receive
 // incoming messages in that room.
 func (service *pubsubService) SubscribeChat(ctx context.Context, topicId, listenerId string, channel chan entity.Chat) error {
-	sub, err := service.findOrCreateSubscription(ctx, roomPrefix+topicId, listenerPrefix+listenerId)
+	topicId = roomPrefix + topicId
+	subId := topicId + "-" + listenerPrefix + listenerId
+	sub, err := service.findOrCreateSubscription(ctx, topicId, subId)
 	if err != nil {
 		return err
 	}
@@ -249,21 +243,25 @@ func (service *pubsubService) findOrCreateSubscription(ctx context.Context, topi
 // addClientToSubs adds a listener (in this case is a client)
 // to the sub of the given topic.
 func (service *pubsubService) addClientToSubs(ctx context.Context, topicId, listenerId string) {
-	for _, v := range service.collections[topicId].clients {
-		if v == listenerId {
-			return
+	if col, found := service.collections[topicId]; found {
+		for _, v := range col.clients {
+			if v == listenerId {
+				return
+			}
 		}
+		col.clients = append(col.clients, listenerId)
 	}
-	service.collections[topicId].clients = append(service.collections[topicId].clients, listenerId)
 }
 
 // addSubsToTopic adds pubsub subscription instance to the
 // given topic.
 func (service *pubsubService) addSubsToTopic(ctx context.Context, topicId string, sub *pubsub.Subscription) {
-	for _, v := range service.collections[topicId].subs {
-		if v == sub {
-			return
+	if col, found := service.collections[topicId]; found {
+		for _, v := range col.subs {
+			if v == sub {
+				return
+			}
 		}
+		col.subs = append(col.subs, sub)
 	}
-	service.collections[topicId].subs = append(service.collections[topicId].subs, sub)
 }

@@ -1,8 +1,8 @@
 package dto
 
 type OpenChatResponse struct {
-	Room RoomResponse   `json:"room"`
-	Chat []ChatResponse `json:"chat"`
+	Room  RoomResponse   `json:"room"`
+	Chats []ChatResponse `json:"chats"`
 }
 
 type RoomResponse struct {
