@@ -20,9 +20,9 @@ func NewRouter(r *gin.Engine, logger *logger.AppLogger, ucComposer composer.IUse
 			NewWebsocketController(ws)
 		}
 
-		chat := v2.Group("/chat", middleware.NewMiddleware().AuthMiddleware(ucComposer.CredentialUseCase(), "hr", "mngr", "staff"))
+		chat := v2.Group("/chat")
 		{
-			NewChatController(chat, ucComposer.ChatUseCase())
+			NewChatController(chat, ucComposer.CredentialUseCase(), ucComposer.EmployeeUseCase(), ucComposer.ChatUseCase())
 		}
 
 		pub := v2.Group("/pub")

@@ -3,13 +3,12 @@ package v2
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"sync"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"sinarlog.com/internal/app/usecase"
+	"sinarlog.com/internal/delivery/middleware"
 	"sinarlog.com/internal/delivery/v2/dto/mapper"
 	"sinarlog.com/internal/delivery/v2/model"
 	"sinarlog.com/internal/entity"
@@ -22,18 +21,7 @@ Controller types
 type ChatController struct {
 	model.BaseControllerV2
 	chatUC usecase.IChatUseCase
-}
-
-// Websocket Upgrader
-var upgrader = websocket.Upgrader{
-	HandshakeTimeout:  5 * time.Second,
-	ReadBufferSize:    1024,
-	WriteBufferSize:   1024,
-	EnableCompression: false,
-	Error: func(w http.ResponseWriter, r *http.Request, status int, reason error) {
-		w.WriteHeader(status)
-		fmt.Fprintf(w, "error: %s", reason)
-	},
+	emplUC usecase.IEmployeeUseCase
 }
 
 type Chatter struct {
@@ -44,14 +32,33 @@ type Chatter struct {
 	controller *ChatController
 }
 
-func NewChatController(rg *gin.RouterGroup, chatUC usecase.IChatUseCase) {
+func NewChatController(rg *gin.RouterGroup, credUC usecase.ICredentialUseCase, emplUC usecase.IEmployeeUseCase, chatUC usecase.IChatUseCase) {
 	controller := new(ChatController)
 	controller.chatUC = chatUC
+	controller.emplUC = emplUC
 
 	// Normal HTTP
-	rg.PUT("/room", controller.openRoomChatHandler)
+	rg.GET("/friends", middleware.NewMiddleware().AuthMiddleware(credUC, "hr", "mngr", "staff"), controller.getFriendsHandler)
+	rg.PUT("/room", middleware.NewMiddleware().AuthMiddleware(credUC, "hr", "mngr", "staff"), controller.openRoomChatHandler)
 	// Websockets
-	rg.GET("/messenger/:userId/:roomId", controller.chattingHandler)
+	rg.GET("/messenger/:roomId/:userId", controller.chattingHandler)
+}
+
+func (controller *ChatController) getFriendsHandler(c *gin.Context) {
+	pquery := controller.ParsePagination(c)
+	user := c.Keys["user"].(entity.Employee)
+
+	q := vo.AllEmployeeQuery{
+		CommonQuery: vo.CommonQuery{Pagination: pquery},
+	}
+
+	res, _, err := controller.emplUC.RetrieveEmployeesList(c.Request.Context(), user, q)
+	if err != nil {
+		controller.SummariesUseCaseError(c, err)
+		return
+	}
+
+	controller.Ok(c, mapper.MapFriendsList(res, user.Id))
 }
 
 func (controller *ChatController) openRoomChatHandler(c *gin.Context) {
@@ -84,11 +91,9 @@ func (controller *ChatController) chattingHandler(c *gin.Context) {
 	userId := c.Param("userId")
 	roomId := c.Param("roomId")
 
-	// Upgrade to websocket
-	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+	conn, err := websocket.Upgrade(c.Writer, c.Request, nil, 1024, 1024)
 	if err != nil {
-		controller.UnexpectedError(c, usecase.NewServiceError("Chat", fmt.Errorf("unable to upgrade connection")))
-		return
+		controller.UnexpectedError(c, usecase.NewServiceError("Notification", fmt.Errorf("unable to upgrade connection")))
 	}
 
 	chatter := &Chatter{
