@@ -5,23 +5,13 @@ WORKDIR /app
 
 COPY . .
 
-RUN go mod tidy
-RUN CGO_ENABLED=0 GOOS=linux go build -o sinarlog-app
-
-# Stage 2: Create the final image
-FROM alpine:latest
+RUN mkdir logs
 
 RUN apk update && apk add --no-cache tzdata
 
-RUN mkdir logs/
-
-COPY --from=builder /app/sinarlog-app /src/sinarlog-app
-COPY --from=builder /app/public /src/public
-COPY --from=builder /app/cert /src/cert
+RUN go install github.com/cosmtrek/air@latest
+RUN go mod tidy
 
 ENV TZ=Asia/Jakarta
-ARG GO_ENV=PRODUCTION
 
-EXPOSE 80
-
-ENTRYPOINT ["/src/sinarlog-app"]
+CMD ["air", "-c", ".air.toml"]

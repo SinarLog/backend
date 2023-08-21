@@ -75,6 +75,8 @@ services:
       - ${PORT}:${PORT}
     networks:
       - sinarlog-network
+    volumes:
+      - ./:/app
     depends_on:
       - pg
       - redis
