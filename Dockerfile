@@ -1,6 +1,8 @@
 # Stage 1: Build the application
 FROM golang:1.20-alpine AS builder
 
+RUN apt-get update && apt-get install -y git
+
 WORKDIR /app
 
 COPY . .
@@ -22,5 +24,7 @@ ENV TZ=Asia/Jakarta
 ARG GO_ENV=PRODUCTION
 
 EXPOSE 80
+
+RUN git config --global --add safe.directory /app
 
 ENTRYPOINT ["/src/sinarlog-app"]
