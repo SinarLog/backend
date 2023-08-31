@@ -1,0 +1,43 @@
+root = "."
+tmp_dir = "tmp"
+
+[build]
+  args_bin = []
+  bin = "./tmp/sinarlog_app"
+  cmd = "CGO_ENABLED=0 GOOS=linux go build -o ./tmp/sinarlog_app ."
+  delay = 1000
+  exclude_dir = ["tmp", "logs"]
+  exclude_file = []
+  exclude_regex = ["_test.go"]
+  exclude_unchanged = false
+  follow_symlink = false
+  full_bin = ""
+  include_dir = []
+  include_ext = ["go", "html"]
+  include_file = []
+  kill_delay = "0s"
+  log = "air_errors.log"
+  poll = false
+  poll_interval = 0
+  rerun = false
+  rerun_delay = 500
+  send_interrupt = false
+  stop_on_error = false
+
+[color]
+  app = ""
+  build = "yellow"
+  main = "magenta"
+  runner = "green"
+  watcher = "cyan"
+
+[log]
+  main_only = false
+  time = false
+
+[misc]
+  clean_on_exit = false
+
+[screen]
+  clear_on_rebuild = false
+  keep_scroll = true
