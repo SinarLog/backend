@@ -13,6 +13,10 @@ FROM alpine:latest
 
 RUN apk update && apk add --no-cache tzdata
 
+RUN apt-get update && apt-get install -y git
+
+RUN git config --global --add safe.directory /app
+
 RUN mkdir logs/
 
 COPY --from=builder /app/sinarlog-app /src/sinarlog-app
