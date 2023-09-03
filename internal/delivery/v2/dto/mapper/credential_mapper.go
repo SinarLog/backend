@@ -15,7 +15,7 @@ func MapLoginRequestToCredentialVO(req dto.LoginRequest) vo.Credential {
 
 func MapToLoginResponse(employee entity.Employee, cred vo.Credential) dto.LoginResponse {
 	return dto.LoginResponse{
-		ID:        employee.Id,
+		ID:        employee.ID,
 		Email:     employee.Email,
 		FullName:  employee.FullName,
 		Avatar:    employee.Avatar,

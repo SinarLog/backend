@@ -59,7 +59,7 @@ func (uc *employeesUseCase) RetrieveEmployeesList(ctx context.Context, requestee
 		return nil, vo.PaginationDTOResponse{}, NewRepositoryError("Role", err)
 	}
 
-	employees, page, err := uc.emplRepo.GetAllEmployees(ctx, requestee.Id, role.Code, q)
+	employees, page, err := uc.emplRepo.GetAllEmployees(ctx, requestee.ID, role.Code, q)
 	if err != nil {
 		return employees, page, NewRepositoryError("Employee", err)
 	}
@@ -67,7 +67,7 @@ func (uc *employeesUseCase) RetrieveEmployeesList(ctx context.Context, requestee
 }
 
 func (uc *employeesUseCase) RetrieveMyProfile(ctx context.Context, user entity.Employee) (entity.Employee, error) {
-	employee, err := uc.emplRepo.GetEmployeeFullProfileById(ctx, user.Id)
+	employee, err := uc.emplRepo.GetEmployeeFullProfileById(ctx, user.ID)
 	if err != nil {
 		return entity.Employee{}, NewRepositoryError("Employee", err)
 	}
@@ -84,8 +84,8 @@ func (uc *employeesUseCase) RegisterNewEmployee(ctx context.Context, creator, pa
 	payload.JoinDate = time.Now().In(utils.CURRENT_LOC)
 	payload.IsNewUser = true
 	payload.Status = entity.UNAVAILABLE
-	payload.Id = uuid.NewString()
-	payload.EmployeeLeavesQuota.EmployeeID = payload.Id
+	payload.ID = uuid.NewString()
+	payload.EmployeeLeavesQuota.EmployeeID = payload.ID
 
 	if !payload.EmployeeBiodata.MaritalStatus {
 		// Query config record
@@ -111,7 +111,7 @@ func (uc *employeesUseCase) RegisterNewEmployee(ctx context.Context, creator, pa
 	payload.Job = job
 
 	// Set who created this employee record
-	payload.CreatedById = &creator.Id
+	payload.CreatedByID = &creator.ID
 	payload.CreatedBy = &creator
 
 	// Validate entity
@@ -129,7 +129,7 @@ func (uc *employeesUseCase) RegisterNewEmployee(ctx context.Context, creator, pa
 
 	// If avatar is provided, upload to the bucket
 	if avatar != nil {
-		url, err := uc.bktService.CreateAvatar(ctx, payload.Id, avatar)
+		url, err := uc.bktService.CreateAvatar(ctx, payload.ID, avatar)
 		if err != nil {
 			return NewServiceError("Bucket", err)
 		}
@@ -138,7 +138,7 @@ func (uc *employeesUseCase) RegisterNewEmployee(ctx context.Context, creator, pa
 
 	// Persist
 	if err := uc.emplRepo.CreateNewEmployee(ctx, payload); err != nil {
-		uc.bktService.DeleteAvatar(ctx, payload.Id)
+		uc.bktService.DeleteAvatar(ctx, payload.ID)
 		return NewRepositoryError("Employee", err)
 	}
 
@@ -197,7 +197,7 @@ func (uc *employeesUseCase) RetrieveEmployeeFullProfile(ctx context.Context, req
 					return employee, NewRepositoryError("Employee", err)
 				}
 				return employee, nil
-			} else if *employee.ManagerID == requestee.Id {
+			} else if *employee.ManagerID == requestee.ID {
 				employee, err = uc.emplRepo.GetEmployeeFullProfileById(ctx, employeeId)
 				if err != nil {
 					return employee, NewRepositoryError("Employee", err)
@@ -245,7 +245,7 @@ func (uc *employeesUseCase) UpdateEmployeeData(ctx context.Context, hr entity.Em
 	logs.Employee = employee
 	logs.EmployeeID = employeeId
 	logs.UpdatedBy = hr
-	logs.UpdatedByID = hr.Id
+	logs.UpdatedByID = hr.ID
 
 	// Update status
 	if payload.Status != nil {
@@ -259,7 +259,7 @@ func (uc *employeesUseCase) UpdateEmployeeData(ctx context.Context, hr entity.Em
 			if *payload.Status == entity.RESIGNED {
 				now := time.Now().In(utils.CURRENT_LOC)
 				employee.ResignedAt = &now
-				employee.ResignedById = &hr.Id
+				employee.ResignedByID = &hr.ID
 				employee.ResignedBy = &hr
 			}
 		}
@@ -376,7 +376,7 @@ func (uc *employeesUseCase) RetrieveEmployeeChangesLog(ctx context.Context, empl
 }
 
 func (uc *employeesUseCase) UpdatePersonalData(ctx context.Context, user entity.Employee, payload vo.UpdateMyData) error {
-	employee, err := uc.emplRepo.GetEmployeeFullProfileById(ctx, payload.Id)
+	employee, err := uc.emplRepo.GetEmployeeFullProfileById(ctx, payload.ID)
 	if err != nil {
 		return NewRepositoryError("Employee", err)
 	}
@@ -384,9 +384,9 @@ func (uc *employeesUseCase) UpdatePersonalData(ctx context.Context, user entity.
 	var log entity.EmployeeDataHistoryLog
 	var changes map[string]any = make(map[string]any)
 
-	log.EmployeeID = user.Id
+	log.EmployeeID = user.ID
 	log.Employee = user
-	log.UpdatedByID = user.Id
+	log.UpdatedByID = user.ID
 	log.UpdatedBy = user
 
 	if employee.EmployeeBiodata.Address != payload.Address {
@@ -411,9 +411,9 @@ func (uc *employeesUseCase) UpdatePersonalData(ctx context.Context, user entity.
 		change["new"] = fmt.Sprintf("%d emergency contacts", len(payload.Contacts))
 		changes["emergency_contacts"] = change
 		for _, v := range payload.Contacts {
-			if v.Id == "" {
+			if v.ID == "" {
 				employee.EmployeesEmergencyContacts = append(employee.EmployeesEmergencyContacts, entity.EmployeesEmergencyContact{
-					EmployeeID:  employee.Id,
+					EmployeeID:  employee.ID,
 					Employee:    employee,
 					FullName:    v.FullName,
 					Relation:    v.Relation,
@@ -459,12 +459,12 @@ func (uc *employeesUseCase) UpdateProfilePic(ctx context.Context, employee entit
 		if employee.Avatar == "" {
 			return nil
 		}
-		if err := uc.bktService.DeleteAvatar(ctx, employee.Id); err != nil {
+		if err := uc.bktService.DeleteAvatar(ctx, employee.ID); err != nil {
 			return NewServiceError("Bucket", err)
 		}
 		employee.Avatar = ""
 	} else {
-		url, err := uc.bktService.CreateAvatar(ctx, employee.Id, avatar)
+		url, err := uc.bktService.CreateAvatar(ctx, employee.ID, avatar)
 		if err != nil {
 			return NewServiceError("Bucket", err)
 		}

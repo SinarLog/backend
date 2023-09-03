@@ -28,7 +28,7 @@ func (uc *chatUseCase) OpenChat(ctx context.Context, user entity.Employee, room 
 		return room, nil, err
 	}
 
-	chats, err := uc.chatRepo.GetChatsByRoomId(ctx, room.Id, user.Id)
+	chats, err := uc.chatRepo.GetChatsByRoomId(ctx, room.ID, user.ID)
 	if err != nil {
 		return room, nil, NewRepositoryError("Chat", err)
 	}

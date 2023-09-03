@@ -54,7 +54,7 @@ ACTOR: STAFF and MANAGER
 // leave request. All types of leave request whether
 // pending or not, will be retrieved.
 func (uc *leaveUseCase) RetrieveMyLeaves(ctx context.Context, employee entity.Employee, q vo.LeaveProposalHistoryQuery) ([]entity.Leave, vo.PaginationDTOResponse, error) {
-	leaves, page, err := uc.leaveRepo.GetMyLeaveRequestsList(ctx, employee.Id, q)
+	leaves, page, err := uc.leaveRepo.GetMyLeaveRequestsList(ctx, employee.ID, q)
 	if err != nil {
 		return nil, vo.PaginationDTOResponse{}, NewRepositoryError("Leave", err)
 	}
@@ -79,7 +79,7 @@ func (uc *leaveUseCase) RetrieveLeaveRequest(ctx context.Context, id string) (en
 // and be changed for RetrieveMyLeaveAggregate to show
 // leave aggregates in the dashboard.
 func (uc *leaveUseCase) RetrieveMyQuotas(ctx context.Context, employee entity.Employee) (entity.EmployeeLeavesQuota, error) {
-	quota, err := uc.emplRepo.GetLeaveQuotaByEmployeeId(ctx, employee.Id)
+	quota, err := uc.emplRepo.GetLeaveQuotaByEmployeeId(ctx, employee.ID)
 	if err != nil {
 		return quota, NewRepositoryError("Employee", err)
 	}
@@ -93,7 +93,7 @@ func (uc *leaveUseCase) RetrieveMyQuotas(ctx context.Context, employee entity.Em
 // It then returns an error or a report regarding the leave
 // request.
 func (uc *leaveUseCase) RequestLeave(ctx context.Context, employee entity.Employee, leave entity.Leave) (entity.LeaveReport, error) {
-	leave.EmployeeID = employee.Id
+	leave.EmployeeID = employee.ID
 
 	// Check availability
 	isAvailable, err := uc.leaveRepo.CheckDateAvailability(ctx, leave)
@@ -152,8 +152,8 @@ func (uc *leaveUseCase) ApplyForLeave(ctx context.Context, employee entity.Emplo
 
 	// Create the parent leave.
 	parent := entity.Leave{
-		BaseModelId: entity.BaseModelId{Id: uuid.NewString()},
-		EmployeeID:  employee.Id,
+		BaseModelID: entity.BaseModelID{ID: uuid.NewString()},
+		EmployeeID:  employee.ID,
 		Employee:    employee,
 		From:        decision.Parent.From,
 		To:          parentsEndDate,
@@ -212,7 +212,7 @@ func (uc *leaveUseCase) ApplyForLeave(ctx context.Context, employee entity.Emplo
 						utils.GetFirstNameFromFullName(employee.FullName),
 						parent.From.In(utils.CURRENT_LOC).Format(time.DateOnly),
 						parent.To.In(utils.CURRENT_LOC).Format(time.DateOnly)),
-					ParentID:          &parent.Id,
+					ParentID:          &parent.ID,
 					ManagerID:         parent.ManagerID,
 					ApprovedByManager: parent.ApprovedByManager,
 					ActionByManagerAt: parent.ActionByManagerAt,
@@ -224,7 +224,7 @@ func (uc *leaveUseCase) ApplyForLeave(ctx context.Context, employee entity.Emplo
 
 	// If an attachment is provided, upload to the bucket
 	if attachment != nil {
-		url, err := uc.bktService.CreateLeaveAttachment(ctx, parent.Id, attachment)
+		url, err := uc.bktService.CreateLeaveAttachment(ctx, parent.ID, attachment)
 		if err != nil {
 			return NewServiceError("Bucket", err)
 		}
@@ -232,7 +232,7 @@ func (uc *leaveUseCase) ApplyForLeave(ctx context.Context, employee entity.Emplo
 	}
 
 	if err := uc.leaveRepo.CreateLeave(ctx, parent); err != nil {
-		uc.bktService.DeleteLeaveAttachment(ctx, parent.Id)
+		uc.bktService.DeleteLeaveAttachment(ctx, parent.ID)
 		return NewRepositoryError("Leave", err)
 	}
 
@@ -277,7 +277,7 @@ func (uc *leaveUseCase) RetrieveMyEmployeesLeaveHistory(ctx context.Context, man
 	if employee.ManagerID == nil {
 		return nil, vo.PaginationDTOResponse{}, NewDomainError("Employee", fmt.Errorf("the employee you're requesting to view is not your staff"))
 	}
-	if *employee.ManagerID != manager.Id {
+	if *employee.ManagerID != manager.ID {
 		return nil, vo.PaginationDTOResponse{}, NewDomainError("Employee", fmt.Errorf("the employee you're requesting to view is not your staff"))
 	}
 
@@ -351,7 +351,7 @@ func (uc *leaveUseCase) createLeaveReport(ctx context.Context, employee entity.E
 	var report entity.LeaveReport
 
 	// Query employee's leave quota
-	quota, err := uc.emplRepo.GetLeaveQuotaByEmployeeId(ctx, employee.Id)
+	quota, err := uc.emplRepo.GetLeaveQuotaByEmployeeId(ctx, employee.ID)
 	if err != nil {
 		return report, NewRepositoryError("Leave", err)
 	}
@@ -374,7 +374,7 @@ func (uc *leaveUseCase) createLeaveReport(ctx context.Context, employee entity.E
 			return report, NewDomainError("Leave", fmt.Errorf("a marriage leave request must be submitted %d days from now", config.AcceptanceLeaveInterval))
 		}
 
-		biodata, err := uc.emplRepo.GetBiodataByEmployeeId(ctx, employee.Id)
+		biodata, err := uc.emplRepo.GetBiodataByEmployeeId(ctx, employee.ID)
 		if err != nil {
 			return report, NewRepositoryError("Leave", err)
 		}

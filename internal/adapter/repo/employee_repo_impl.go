@@ -242,7 +242,7 @@ func (repo *employeeRepo) UpdatePersonalData(ctx context.Context, employee entit
 func (repo *employeeRepo) UpdateAvatar(ctx context.Context, employee entity.Employee) error {
 	if err := repo.db.WithContext(ctx).
 		Model(&employee).
-		Where("id = ?", employee.Id).
+		Where("id = ?", employee.ID).
 		Update("avatar", employee.Avatar).Error; err != nil {
 		return err
 	}

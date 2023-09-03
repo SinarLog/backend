@@ -41,7 +41,7 @@ func (s *doorkeeperService) GenerateToken(employee entity.Employee) (token strin
 		"iss": s.dk.GetIssuer(),
 		"eat": now.Add(s.dk.AccessDuration).Unix(),
 		"iat": now.Unix(),
-		"id":  employee.Id,
+		"id":  employee.ID,
 		"nbf": now.Unix(),
 	}
 

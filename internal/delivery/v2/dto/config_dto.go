@@ -21,7 +21,7 @@ type UpdateConfigRequest struct {
 }
 
 type ConfigChangesLogsResponse struct {
-	Id          string                    `json:"id,omitempty"`
+	ID          string                    `json:"id,omitempty"`
 	UpdatedBy   BriefEmployeeListResponse `json:"updatedBy,omitempty"`
 	Changes     map[string]any            `json:"changes,omitempty"`
 	UpdatedAt   string                    `json:"updatedAt,omitempty"`

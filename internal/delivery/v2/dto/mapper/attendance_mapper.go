@@ -108,7 +108,7 @@ func MapEmployeesAttendanceLogToResponse(att []entity.Attendance) []dto.Employee
 
 	for _, v := range att {
 		a := dto.EmployeesAttendanceHistory{
-			Id:            v.Id,
+			ID:            v.ID,
 			Avatar:        v.Employee.Avatar,
 			FullName:      v.Employee.FullName,
 			Email:         v.Employee.Email,

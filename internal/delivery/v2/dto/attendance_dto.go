@@ -42,7 +42,7 @@ type MyAttendanceHistory struct {
 }
 
 type EmployeesAttendanceHistory struct {
-	Id                  string  `json:"id,omitempty"`
+	ID                  string  `json:"id,omitempty"`
 	Avatar              string  `json:"avatar,omitempty"`
 	FullName            string  `json:"fullName,omitempty"`
 	Email               string  `json:"email,omitempty"`

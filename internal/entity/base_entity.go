@@ -6,8 +6,8 @@ import (
 	"gorm.io/gorm"
 )
 
-type BaseModelId struct {
-	Id string `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
+type BaseModelID struct {
+	ID string `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
 }
 
 type BaseModelStamps struct {

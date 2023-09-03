@@ -113,7 +113,7 @@ func (controller *ProfileController) getMyChangesLog(c *gin.Context) {
 		Pagination: controller.ParsePagination(c),
 	}
 
-	res, page, err := controller.emplUC.RetrieveEmployeeChangesLog(c.Request.Context(), user.Id, q)
+	res, page, err := controller.emplUC.RetrieveEmployeeChangesLog(c.Request.Context(), user.ID, q)
 	if err != nil {
 		controller.SummariesUseCaseError(c, err)
 		return

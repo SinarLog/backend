@@ -49,7 +49,7 @@ func (repo *credentialRepo) UpdateEmployeePassword(ctx context.Context, employee
 	if err := repo.db.
 		WithContext(ctx).
 		Model(&employee).
-		Where("id = ?", employee.Id).
+		Where("id = ?", employee.ID).
 		Update("password", employee.Password).Error; err != nil {
 		return err
 	}

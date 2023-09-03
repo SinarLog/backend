@@ -114,7 +114,7 @@ func (controller *ManagerController) takeActionOnLeaveProposalHandler(c *gin.Con
 func (controller *ManagerController) getDashboardAnalyticsHandler(c *gin.Context) {
 	user := c.Keys["user"].(entity.Employee)
 
-	res, err := controller.analUC.RetrieveDashboardAnalyticsForEmployeeById(c.Request.Context(), user.Id)
+	res, err := controller.analUC.RetrieveDashboardAnalyticsForEmployeeById(c.Request.Context(), user.ID)
 	if err != nil {
 		controller.SummariesUseCaseError(c, err)
 		return

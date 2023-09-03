@@ -33,7 +33,7 @@ func (l LeaveType) String() string {
 }
 
 type Leave struct {
-	BaseModelId
+	BaseModelID
 
 	EmployeeID    string `gorm:"type:uuid"`
 	Employee      Employee

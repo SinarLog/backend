@@ -10,7 +10,7 @@ func MapJobsResponse(jobs []entity.Job) []dto.JobResponse {
 
 	for _, v := range jobs {
 		res = append(res, dto.JobResponse{
-			ID:   v.Id,
+			ID:   v.ID,
 			Name: v.Name,
 		})
 	}

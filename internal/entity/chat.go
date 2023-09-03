@@ -10,13 +10,13 @@ var (
 )
 
 type Room struct {
-	Id           primitive.ObjectID `bson:"_id,omitempty"`
+	ID           primitive.ObjectID `bson:"_id,omitempty"`
 	Participants []string           `bson:"participants,omitempty"`
 	CreatedAt    primitive.DateTime `bson:"createdAt,omitempty"`
 }
 
 type Chat struct {
-	Id        primitive.ObjectID  `bson:"_id,omitempty"`
+	ID        primitive.ObjectID  `bson:"_id,omitempty"`
 	RoomId    primitive.ObjectID  `bson:"roomId,omitempty"`
 	Sender    string              `bson:"sender,omitempty"`
 	Message   string              `bson:"message,omitempty"`

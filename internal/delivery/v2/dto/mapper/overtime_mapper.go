@@ -45,7 +45,7 @@ func MapIncomingOvertimeSubmissionsToResponse(ovs []entity.Overtime) []dto.Incom
 	var res []dto.IncomingOvertimeSubmissionsForManagerResponse
 	for _, v := range ovs {
 		r := dto.IncomingOvertimeSubmissionsForManagerResponse{
-			Id:       v.Id,
+			ID:       v.ID,
 			Avatar:   v.Attendance.Employee.Avatar,
 			FullName: v.Attendance.Employee.FullName,
 			Date:     v.Attendance.ClockInAt.In(utils.CURRENT_LOC).Format(time.DateOnly),
@@ -61,7 +61,7 @@ func MapIncomingOvertimeSubmissionsToResponse(ovs []entity.Overtime) []dto.Incom
 func MapOvertimeDetailToResponse(ov entity.Overtime) dto.OvertimeSubmissionDetailResponse {
 	res := dto.OvertimeSubmissionDetailResponse{
 		IncomingOvertimeSubmissionsForManagerResponse: dto.IncomingOvertimeSubmissionsForManagerResponse{
-			Id:       ov.Id,
+			ID:       ov.ID,
 			Avatar:   ov.Attendance.Employee.Avatar,
 			FullName: ov.Attendance.Employee.FullName,
 			Date:     ov.Attendance.ClockInAt.In(utils.CURRENT_LOC).Format(time.DateOnly),
@@ -96,7 +96,7 @@ func MapOvertimeDetailToResponse(ov entity.Overtime) dto.OvertimeSubmissionDetai
 
 	if ov.Manager != nil {
 		res.Manager = &dto.BriefEmployeeListResponse{
-			Id:       *ov.ManagerID,
+			ID:       *ov.ManagerID,
 			FullName: ov.Manager.FullName,
 			Email:    ov.Manager.Email,
 			Avatar:   ov.Manager.Avatar,
@@ -111,7 +111,7 @@ func MapMyOvertimeSubmissonToResponse(ovs []entity.Overtime) []dto.MyOvertimeSub
 
 	for _, ov := range ovs {
 		r := dto.MyOvertimeSubmissionResponse{
-			Id:          ov.Id,
+			ID:          ov.ID,
 			RequestDate: ov.CreatedAt.In(utils.CURRENT_LOC).Format(time.DateOnly),
 			Duration:    utils.SanitizeDuration(time.Duration(ov.Duration)),
 		}

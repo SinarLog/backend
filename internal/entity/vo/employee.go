@@ -11,7 +11,7 @@ type UpdateEmployeeData struct {
 }
 
 type UpdateMyData struct {
-	Id          string             `json:"id,omitempty"`
+	ID          string             `json:"id,omitempty"`
 	PhoneNumber string             `json:"phoneNumber,omitempty"`
 	Address     string             `json:"address,omitempty"`
 	Contacts    []EmergencyContact `json:"contacts,omitempty"`
@@ -23,7 +23,7 @@ type UpdatePassword struct {
 }
 
 type EmergencyContact struct {
-	Id          string          `json:"id,omitempty"`
+	ID          string          `json:"id,omitempty"`
 	FullName    string          `json:"fullName,omitempty"`
 	PhoneNumber string          `json:"phoneNumber,omitempty"`
 	Relation    entity.Relation `json:"relation,omitempty"`

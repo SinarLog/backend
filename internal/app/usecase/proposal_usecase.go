@@ -28,7 +28,7 @@ func (uc *leaveUseCase) SeeIncomingLeaveProposalsForManager(ctx context.Context,
 		return nil, vo.PaginationDTOResponse{}, NewClientError("Query", err)
 	}
 
-	leaves, page, err := uc.leaveRepo.GetIncomingLeaveProposalForManager(ctx, manager.Id, q)
+	leaves, page, err := uc.leaveRepo.GetIncomingLeaveProposalForManager(ctx, manager.ID, q)
 	if err != nil {
 		return nil, page, NewRepositoryError("Leave", err)
 	}
@@ -37,7 +37,7 @@ func (uc *leaveUseCase) SeeIncomingLeaveProposalsForManager(ctx context.Context,
 }
 
 func (uc *leaveUseCase) TakeActionOnLeaveProposalForManager(ctx context.Context, manager entity.Employee, action vo.LeaveAction) error {
-	leave, err := uc.leaveRepo.GetLeaveById(ctx, action.Id)
+	leave, err := uc.leaveRepo.GetLeaveById(ctx, action.ID)
 	if err != nil {
 		return NewRepositoryError("Leave", err)
 	}
@@ -75,10 +75,10 @@ func (uc *leaveUseCase) TakeActionOnLeaveProposalForManager(ctx context.Context,
 		// the childs belongs to the parent
 		var childIds []any
 		for _, v := range leave.Childs {
-			childIds = append(childIds, v.Id)
+			childIds = append(childIds, v.ID)
 		}
 		for _, v := range action.Childs {
-			if err := validation.Validate(v.Id, validation.In(childIds...)); err != nil {
+			if err := validation.Validate(v.ID, validation.In(childIds...)); err != nil {
 				return NewDomainError("Leave", fmt.Errorf("an overflow leave id does not belong to the associated leave"))
 			}
 		}
@@ -87,7 +87,7 @@ func (uc *leaveUseCase) TakeActionOnLeaveProposalForManager(ctx context.Context,
 	// Validate that its true the leave is directed for the current user.
 	if leave.ManagerID == nil {
 		return NewDomainError("Leave", fmt.Errorf("this leave request is not assigned for you"))
-	} else if *leave.ManagerID != manager.Id {
+	} else if *leave.ManagerID != manager.ID {
 		return NewDomainError("Leave", fmt.Errorf("you are not allowed to process this leave request"))
 	}
 
@@ -149,7 +149,7 @@ func (uc *leaveUseCase) RetrieveLeaveProposalsHistoryForManager(ctx context.Cont
 		return nil, vo.PaginationDTOResponse{}, NewClientError("Leave", err)
 	}
 
-	leaves, page, err := uc.leaveRepo.GetLeaveProposalHistoryForManager(ctx, manager.Id, q)
+	leaves, page, err := uc.leaveRepo.GetLeaveProposalHistoryForManager(ctx, manager.ID, q)
 	if err != nil {
 		return nil, page, NewRepositoryError("Leave", err)
 	}
@@ -179,7 +179,7 @@ func (uc *leaveUseCase) SeeIncomingLeaveProposalsForHr(ctx context.Context, q vo
 }
 
 func (uc *leaveUseCase) TakeActionOnLeaveProposalForHr(ctx context.Context, hr entity.Employee, action vo.LeaveAction) error {
-	leave, err := uc.leaveRepo.GetLeaveById(ctx, action.Id)
+	leave, err := uc.leaveRepo.GetLeaveById(ctx, action.ID)
 	if err != nil {
 		return NewRepositoryError("Leave", err)
 	}
@@ -231,7 +231,7 @@ func (uc *leaveUseCase) TakeActionOnLeaveProposalForHr(ctx context.Context, hr e
 				return NewDomainError("Leave", fmt.Errorf("there exists an overflow associated with the leave that has not been processed"))
 			} else if *v.ApprovedByManager {
 				requiredAction++
-				childsRequiredIds = append(childsRequiredIds, v.Id)
+				childsRequiredIds = append(childsRequiredIds, v.ID)
 			}
 		}
 
@@ -242,7 +242,7 @@ func (uc *leaveUseCase) TakeActionOnLeaveProposalForHr(ctx context.Context, hr e
 
 		// Validate that its true each of the childs belongs to the parent
 		for _, v := range action.Childs {
-			if err := validation.Validate(v.Id, validation.In(childsRequiredIds...)); err != nil {
+			if err := validation.Validate(v.ID, validation.In(childsRequiredIds...)); err != nil {
 				return NewDomainError("Leave", fmt.Errorf("an overflow leave id does not belong to the associated leave"))
 			}
 		}
@@ -252,7 +252,7 @@ func (uc *leaveUseCase) TakeActionOnLeaveProposalForHr(ctx context.Context, hr e
 	// will be rejected. On the other hand, if parent is approved
 	// its children may be individual approved or rejected.
 	now := time.Now().In(utils.CURRENT_LOC)
-	leave.HrID = &hr.Id
+	leave.HrID = &hr.ID
 
 	if !action.Approved {
 		if err := validation.Validate(&action.Reason, validation.Required, validation.Length(20, 1000)); err != nil {
@@ -276,7 +276,7 @@ func (uc *leaveUseCase) TakeActionOnLeaveProposalForHr(ctx context.Context, hr e
 				// Find the approriate action
 				var k vo.LeaveAction
 				for _, v := range action.Childs {
-					if v.Id == leave.Childs[i].Id {
+					if v.ID == leave.Childs[i].ID {
 						k = v
 					}
 				}

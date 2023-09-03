@@ -92,7 +92,7 @@ func MapMyLeaveRequestListToResponse(leaves []entity.Leave) []dto.MyLeaveRequest
 
 	for _, v := range leaves {
 		l := dto.MyLeaveRequestListsResponse{
-			Id:          v.Id,
+			ID:          v.ID,
 			RequestDate: v.CreatedAt.In(utils.CURRENT_LOC).Format(time.DateOnly),
 			From:        v.From.In(utils.CURRENT_LOC).Format(time.DateOnly),
 			To:          v.To.In(utils.CURRENT_LOC).Format(time.DateOnly),
@@ -109,7 +109,7 @@ func MapMyLeaveRequestListToResponse(leaves []entity.Leave) []dto.MyLeaveRequest
 
 func MapMyLeaveRequestDetailToResponse(leave entity.Leave) dto.MyLeaveRequestDetailResponse {
 	res := dto.MyLeaveRequestDetailResponse{
-		Id:                  leave.Id,
+		ID:                  leave.ID,
 		RequestDate:         leave.CreatedAt.In(utils.CURRENT_LOC).Format(time.DateOnly),
 		From:                leave.From.In(utils.CURRENT_LOC).Format(time.DateOnly),
 		To:                  leave.To.In(utils.CURRENT_LOC).Format(time.DateOnly),
@@ -137,7 +137,7 @@ func MapMyLeaveRequestDetailToResponse(leave entity.Leave) dto.MyLeaveRequestDet
 
 	if leave.Parent != nil {
 		res.Parent = &dto.LeaveRequest{
-			Id:          *leave.ParentID,
+			ID:          *leave.ParentID,
 			From:        leave.Parent.From.In(utils.CURRENT_LOC).Format(time.DateOnly),
 			To:          leave.Parent.To.In(utils.CURRENT_LOC).Format(time.DateOnly),
 			Type:        leave.Parent.Type.String(),
@@ -152,7 +152,7 @@ func MapMyLeaveRequestDetailToResponse(leave entity.Leave) dto.MyLeaveRequestDet
 	if leave.Childs != nil {
 		for _, v := range leave.Childs {
 			c := dto.LeaveRequest{
-				Id:       v.Id,
+				ID:       v.ID,
 				From:     v.From.In(utils.CURRENT_LOC).Format(time.DateOnly),
 				To:       v.To.In(utils.CURRENT_LOC).Format(time.DateOnly),
 				Type:     v.Type.String(),
@@ -166,7 +166,7 @@ func MapMyLeaveRequestDetailToResponse(leave entity.Leave) dto.MyLeaveRequestDet
 
 	if leave.Manager != nil {
 		res.Manager = &dto.BriefEmployeeListResponse{
-			Id:       leave.Manager.Id,
+			ID:       leave.Manager.ID,
 			FullName: leave.Manager.FullName,
 			Email:    leave.Manager.Email,
 			Avatar:   leave.Manager.Avatar,
@@ -175,7 +175,7 @@ func MapMyLeaveRequestDetailToResponse(leave entity.Leave) dto.MyLeaveRequestDet
 
 	if leave.Hr != nil {
 		res.Hr = &dto.BriefEmployeeListResponse{
-			Id:       leave.Hr.Id,
+			ID:       leave.Hr.ID,
 			FullName: leave.Hr.FullName,
 			Email:    leave.Hr.Email,
 			Avatar:   leave.Hr.Avatar,
@@ -205,7 +205,7 @@ func MapLeaveRequestReportToResponse(report entity.LeaveReport) dto.LeaveRequest
 
 func MapLeaveRequestDetailToResponse(leave entity.Leave) dto.LeaveRequestDetailResponse {
 	res := dto.LeaveRequestDetailResponse{
-		Id:                  leave.Id,
+		ID:                  leave.ID,
 		RequestDate:         leave.CreatedAt.In(utils.CURRENT_LOC).Format(time.DateOnly),
 		From:                leave.From.In(utils.CURRENT_LOC).Format(time.DateOnly),
 		To:                  leave.To.In(utils.CURRENT_LOC).Format(time.DateOnly),
@@ -236,7 +236,7 @@ func MapLeaveRequestDetailToResponse(leave entity.Leave) dto.LeaveRequestDetailR
 
 	if leave.Parent != nil {
 		res.Parent = &dto.LeaveRequest{
-			Id:          *leave.ParentID,
+			ID:          *leave.ParentID,
 			From:        leave.Parent.From.In(utils.CURRENT_LOC).Format(time.DateOnly),
 			To:          leave.Parent.To.In(utils.CURRENT_LOC).Format(time.DateOnly),
 			Type:        leave.Parent.Type.String(),
@@ -250,7 +250,7 @@ func MapLeaveRequestDetailToResponse(leave entity.Leave) dto.LeaveRequestDetailR
 	if leave.Childs != nil {
 		for _, v := range leave.Childs {
 			c := dto.LeaveRequestDetailResponse{
-				Id:                  v.Id,
+				ID:                  v.ID,
 				RequestDate:         v.CreatedAt.In(utils.CURRENT_LOC).Format(time.DateOnly),
 				From:                v.From.In(utils.CURRENT_LOC).Format(time.DateOnly),
 				To:                  v.To.In(utils.CURRENT_LOC).Format(time.DateOnly),
@@ -281,7 +281,7 @@ func MapLeaveRequestDetailToResponse(leave entity.Leave) dto.LeaveRequestDetailR
 
 	if leave.Manager != nil {
 		res.Manager = &dto.BriefEmployeeListResponse{
-			Id:       leave.Manager.Id,
+			ID:       leave.Manager.ID,
 			FullName: leave.Manager.FullName,
 			Email:    leave.Manager.Email,
 			Avatar:   leave.Manager.Avatar,
@@ -290,7 +290,7 @@ func MapLeaveRequestDetailToResponse(leave entity.Leave) dto.LeaveRequestDetailR
 
 	if leave.Hr != nil {
 		res.Hr = &dto.BriefEmployeeListResponse{
-			Id:       leave.Hr.Id,
+			ID:       leave.Hr.ID,
 			FullName: leave.Hr.FullName,
 			Email:    leave.Hr.Email,
 			Avatar:   leave.Hr.Avatar,

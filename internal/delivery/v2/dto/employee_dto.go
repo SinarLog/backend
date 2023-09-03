@@ -29,7 +29,7 @@ type CreateNewEmployeeRequest struct {
 }
 
 type BriefEmployeeListResponse struct {
-	Id       string `json:"id,omitempty"`
+	ID       string `json:"id,omitempty"`
 	FullName string `json:"fullName,omitempty"`
 	Status   string `json:"status,omitempty"`
 	Email    string `json:"email,omitempty"`
@@ -58,7 +58,7 @@ type EmployeeLeaveQuotaResponse struct {
 }
 
 type EmployeeEmergencyContactResponse struct {
-	Id          string `json:"id"`
+	ID          string `json:"id"`
 	EmployeeID  string `json:"employeeId,omitempty"`
 	FullName    string `json:"fullName,omitempty"`
 	Relation    string `json:"relation,omitempty"`
@@ -66,14 +66,14 @@ type EmployeeEmergencyContactResponse struct {
 }
 
 type EmployeeChangesLogs struct {
-	Id        string                    `json:"id,omitempty"`
+	ID        string                    `json:"id,omitempty"`
 	UpdatedBy BriefEmployeeListResponse `json:"updatedBy,omitempty"`
 	Changes   map[string]any            `json:"changes,omitempty"`
 	UpdatedAt string                    `json:"updatedAt,omitempty"`
 }
 
 type EmployeeFullProfileResponse struct {
-	Id           string  `json:"id,omitempty"`
+	ID           string  `json:"id,omitempty"`
 	FullName     string  `json:"fullName,omitempty"`
 	Email        string  `json:"email,omitempty"`
 	ContractType string  `json:"contractType,omitempty"`
@@ -89,9 +89,9 @@ type EmployeeFullProfileResponse struct {
 
 	ManagerID *string                    `json:"managerId,omitempty"`
 	Manager   *BriefEmployeeListResponse `json:"manager,omitempty"`
-	// CreatedById  *string `gorm:"type:uuid;default:null"`
+	// CreatedByID  *string `gorm:"type:uuid;default:null"`
 	// CreatedBy    *Employee
-	// ResignedById *string `gorm:"type:uuid;default:null"`
+	// ResignedByID *string `gorm:"type:uuid;default:null"`
 	// ResignedBy   *Employee
 	Role RoleResponse `json:"role,omitempty"`
 	Job  JobResponse  `json:"job,omitempty"`

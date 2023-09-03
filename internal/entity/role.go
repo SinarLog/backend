@@ -2,7 +2,7 @@ package entity
 
 // Example of a role is staff, manager, and HR
 type Role struct {
-	BaseModelId
+	BaseModelID
 
 	Name string `gorm:"uniqueIndex;type:varchar(100)"`
 	Code string `gorm:"type:varchar(50)"`

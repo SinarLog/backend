@@ -63,8 +63,8 @@ func NewPubSubService(ps *pubsub.Client) *pubsubService {
 
 // PublshChat publishes a chat into the pubsub service.
 // This  will then be consumed by listeners, if there are.
-func (service *pubsubService) PublishChat(ctx context.Context, topicId string, publisherId string, payload entity.Chat) error {
-	topic, err := service.findOrCreateTopic(ctx, roomPrefix+topicId)
+func (service *pubsubService) PublishChat(ctx context.Context, topicID string, publisherID string, payload entity.Chat) error {
+	topic, err := service.findOrCreateTopic(ctx, roomPrefix+topicID)
 	if err != nil {
 		return err
 	}
@@ -74,7 +74,7 @@ func (service *pubsubService) PublishChat(ctx context.Context, topicId string, p
 		return fmt.Errorf("json marshal error: %s", err)
 	}
 	r := topic.Publish(ctx, &pubsub.Message{
-		ID:   topicId,
+		ID:   topicID,
 		Data: json,
 	})
 
@@ -88,10 +88,10 @@ func (service *pubsubService) PublishChat(ctx context.Context, topicId string, p
 // SubscribeChat lets a user to be subscribed to
 // a topic (in this case is a room) and will receive
 // incoming messages in that room.
-func (service *pubsubService) SubscribeChat(ctx context.Context, topicId, listenerId string, channel chan entity.Chat) error {
-	topicId = roomPrefix + topicId
-	subId := topicId + "-" + listenerPrefix + listenerId
-	sub, err := service.findOrCreateSubscription(ctx, topicId, subId)
+func (service *pubsubService) SubscribeChat(ctx context.Context, topicID, listenerID string, channel chan entity.Chat) error {
+	topicID = roomPrefix + topicID
+	subID := topicID + "-" + listenerPrefix + listenerID
+	sub, err := service.findOrCreateSubscription(ctx, topicID, subID)
 	if err != nil {
 		return err
 	}
@@ -116,8 +116,8 @@ func (service *pubsubService) SubscribeChat(ctx context.Context, topicId, listen
 // hash list of clients when the client is no longer subscribing
 // to the topic. This should be called when client is about to
 // be disconnected from the chat.
-func (service *pubsubService) UnregisterClient(ctx context.Context, topicId, listenerId string) error {
-	collection, exist := service.collections[roomPrefix+topicId]
+func (service *pubsubService) UnregisterClient(ctx context.Context, topicID, listenerID string) error {
+	collection, exist := service.collections[roomPrefix+topicID]
 	if !exist {
 		return fmt.Errorf("the topic is not found in hash")
 	}
@@ -126,7 +126,7 @@ func (service *pubsubService) UnregisterClient(ctx context.Context, topicId, lis
 	defer collection.mu.Unlock()
 
 	for i, v := range collection.clients {
-		if v == listenerPrefix+listenerId {
+		if v == listenerPrefix+listenerID {
 			collection.clients = append(collection.clients[:i], collection.clients[i+1:]...)
 			return nil
 		}
@@ -140,12 +140,12 @@ func (service *pubsubService) UnregisterClient(ctx context.Context, topicId, lis
 // by the room id in the collections hash map. If it is
 // not found, it then finds the topic in the google cloud
 // itself. If still not found, we then create a new topic.
-func (service *pubsubService) findOrCreateTopic(ctx context.Context, topicId string) (*pubsub.Topic, error) {
+func (service *pubsubService) findOrCreateTopic(ctx context.Context, topicID string) (*pubsub.Topic, error) {
 	service.mu.Lock()
 	defer service.mu.Unlock()
 
 	// Finds in current collections
-	if col, found := service.collections[topicId]; found {
+	if col, found := service.collections[topicID]; found {
 		return col.topic, nil
 	}
 
@@ -160,7 +160,7 @@ func (service *pubsubService) findOrCreateTopic(ctx context.Context, topicId str
 			return nil, err
 		}
 
-		if t.ID() == topicId {
+		if t.ID() == topicID {
 			// Make new collection for the topic
 			service.collections[t.ID()] = &collection{
 				topic: t,
@@ -170,7 +170,7 @@ func (service *pubsubService) findOrCreateTopic(ctx context.Context, topicId str
 	}
 
 	// Create a new topic
-	topic, err := service.ps.CreateTopic(ctx, topicId)
+	topic, err := service.ps.CreateTopic(ctx, topicID)
 	if err != nil {
 		return nil, err
 	}
@@ -188,8 +188,8 @@ func (service *pubsubService) findOrCreateTopic(ctx context.Context, topicId str
 // it looks through the subs of the given topic in the google
 // cloud. If still not found it will create a new sub to the
 // topic.
-func (service *pubsubService) findOrCreateSubscription(ctx context.Context, topicId, listenerId string) (*pubsub.Subscription, error) {
-	topic, err := service.findOrCreateTopic(ctx, topicId)
+func (service *pubsubService) findOrCreateSubscription(ctx context.Context, topicID, listenerID string) (*pubsub.Subscription, error) {
+	topic, err := service.findOrCreateTopic(ctx, topicID)
 	if err != nil {
 		return nil, err
 	}
@@ -199,7 +199,7 @@ func (service *pubsubService) findOrCreateSubscription(ctx context.Context, topi
 
 	// Finds in current collections
 	for _, sub := range service.collections[topic.ID()].subs {
-		if sub.ID() == listenerId {
+		if sub.ID() == listenerID {
 			return sub, nil
 		}
 	}
@@ -216,17 +216,17 @@ func (service *pubsubService) findOrCreateSubscription(ctx context.Context, topi
 			return nil, err
 		}
 
-		if sub.ID() == listenerId {
+		if sub.ID() == listenerID {
 			// Store in collection
 			service.addSubsToTopic(ctx, topic.ID(), sub)
-			service.addClientToSubs(ctx, topic.ID(), listenerId)
+			service.addClientToSubs(ctx, topic.ID(), listenerID)
 
 			return sub, nil
 		}
 	}
 
 	// Create new sub
-	sub, err := service.ps.CreateSubscription(ctx, listenerId, pubsub.SubscriptionConfig{
+	sub, err := service.ps.CreateSubscription(ctx, listenerID, pubsub.SubscriptionConfig{
 		Topic: topic,
 	})
 	if err != nil {
@@ -235,28 +235,28 @@ func (service *pubsubService) findOrCreateSubscription(ctx context.Context, topi
 
 	// Store in collection
 	service.addSubsToTopic(ctx, topic.ID(), sub)
-	service.addClientToSubs(ctx, topic.ID(), listenerId)
+	service.addClientToSubs(ctx, topic.ID(), listenerID)
 
 	return sub, nil
 }
 
 // addClientToSubs adds a listener (in this case is a client)
 // to the sub of the given topic.
-func (service *pubsubService) addClientToSubs(ctx context.Context, topicId, listenerId string) {
-	if col, found := service.collections[topicId]; found {
+func (service *pubsubService) addClientToSubs(ctx context.Context, topicID, listenerID string) {
+	if col, found := service.collections[topicID]; found {
 		for _, v := range col.clients {
-			if v == listenerId {
+			if v == listenerID {
 				return
 			}
 		}
-		col.clients = append(col.clients, listenerId)
+		col.clients = append(col.clients, listenerID)
 	}
 }
 
 // addSubsToTopic adds pubsub subscription instance to the
 // given topic.
-func (service *pubsubService) addSubsToTopic(ctx context.Context, topicId string, sub *pubsub.Subscription) {
-	if col, found := service.collections[topicId]; found {
+func (service *pubsubService) addSubsToTopic(ctx context.Context, topicID string, sub *pubsub.Subscription) {
+	if col, found := service.collections[topicID]; found {
 		for _, v := range col.subs {
 			if v == sub {
 				return

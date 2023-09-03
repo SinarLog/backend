@@ -179,9 +179,9 @@ func (repo *seeder) seedHRs(ctx context.Context) error {
 			UnpaidCount:   0,
 			MarriageCount: 3,
 		},
-		RoleID: role.Id,
+		RoleID: role.ID,
 		Role:   role,
-		JobID:  job.Id,
+		JobID:  job.ID,
 		Job:    job,
 	}
 
@@ -222,7 +222,7 @@ func (repo *seeder) seedDummyManager(ctx context.Context) error {
 		JoinDate:     time.Date(2022, 2, 2, 0, 0, 0, 0, utils.CURRENT_LOC),
 		Avatar:       "",
 		Status:       entity.UNAVAILABLE,
-		CreatedById:  &hr.Id,
+		CreatedByID:  &hr.ID,
 		EmployeeBiodata: entity.EmployeeBiodata{
 			NIK:           "3269020202020203",
 			NPWP:          "99.999.999-9.999.991",
@@ -245,9 +245,9 @@ func (repo *seeder) seedDummyManager(ctx context.Context) error {
 			UnpaidCount:   0,
 			MarriageCount: 3,
 		},
-		RoleID: role.Id,
+		RoleID: role.ID,
 		Role:   role,
-		JobID:  job.Id,
+		JobID:  job.ID,
 		Job:    job,
 	}
 

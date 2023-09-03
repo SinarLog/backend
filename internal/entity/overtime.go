@@ -9,7 +9,7 @@ import (
 )
 
 type Overtime struct {
-	BaseModelId
+	BaseModelID
 
 	AttendanceID  string `gorm:"type:uuid"`
 	Duration      int

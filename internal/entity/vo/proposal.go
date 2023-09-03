@@ -32,7 +32,7 @@ func (v UserLeaveDecision) ValidateExcessSumOfDays(report entity.LeaveReport) er
 }
 
 type LeaveAction struct {
-	Id       string        `json:"id,omitempty" binding:"required"`
+	ID       string        `json:"id,omitempty" binding:"required"`
 	Approved bool          `json:"approved,omitempty"`
 	Reason   string        `json:"reason,omitempty"`
 	Childs   []LeaveAction `json:"childs,omitempty"`
@@ -40,7 +40,7 @@ type LeaveAction struct {
 
 func (v LeaveAction) Validate() error {
 	return validation.ValidateStruct(&v,
-		validation.Field(&v.Id,
+		validation.Field(&v.ID,
 			validation.Required.Error("id field is required"),
 			is.UUIDv4.Error("id must be a uuid"),
 		),
@@ -49,7 +49,7 @@ func (v LeaveAction) Validate() error {
 }
 
 type OvertimeSubmissionAction struct {
-	Id       string `json:"id,omitempty" binding:"required"`
+	ID       string `json:"id,omitempty" binding:"required"`
 	Approved bool   `json:"approved,omitempty"`
 	Reason   string `json:"reason,omitempty"`
 }

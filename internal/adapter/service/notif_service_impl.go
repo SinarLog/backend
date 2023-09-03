@@ -23,7 +23,7 @@ func NewNotifService(redis *redis.Client) *notifService {
 }
 
 func (s *notifService) SendOvertimeSubmissionNotification(ctx context.Context, receiver, sender entity.Employee) (int64, error) {
-	channel := fmt.Sprintf("%s:%s", baseChannel, receiver.Id)
+	channel := fmt.Sprintf("%s:%s", baseChannel, receiver.ID)
 	payload := fmt.Sprintf("%s;%s;%s", overtime, sender.FullName, sender.Avatar)
 	res, err := s.rdis.Publish(ctx, channel, payload).Result()
 	if err != nil {
@@ -34,7 +34,7 @@ func (s *notifService) SendOvertimeSubmissionNotification(ctx context.Context, r
 }
 
 func (s *notifService) SendLeaveRequestNotification(ctx context.Context, receiver, sender entity.Employee) (int64, error) {
-	channel := fmt.Sprintf("%s:%s", baseChannel, receiver.Id)
+	channel := fmt.Sprintf("%s:%s", baseChannel, receiver.ID)
 	payload := fmt.Sprintf("%s;%s;%s", leave, sender.FullName, sender.Avatar)
 	res, err := s.rdis.Publish(ctx, channel, payload).Result()
 	if err != nil {

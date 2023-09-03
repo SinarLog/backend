@@ -69,7 +69,7 @@ func (repo *chatRepo) CreateRoom(ctx context.Context, room entity.Room) (entity.
 		return room, err
 	}
 
-	room.Id = res.InsertedID.(primitive.ObjectID)
+	room.ID = res.InsertedID.(primitive.ObjectID)
 
 	return room, nil
 }
@@ -137,7 +137,7 @@ func (repo *chatRepo) CreateNewMessage(ctx context.Context, userId, roomId, mess
 		return chat, err
 	}
 
-	chat.Id = res.InsertedID.(primitive.ObjectID)
+	chat.ID = res.InsertedID.(primitive.ObjectID)
 
 	return chat, nil
 }

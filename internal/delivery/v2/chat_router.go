@@ -58,7 +58,7 @@ func (controller *ChatController) getFriendsHandler(c *gin.Context) {
 		return
 	}
 
-	controller.Ok(c, mapper.MapFriendsList(res, user.Id))
+	controller.Ok(c, mapper.MapFriendsList(res, user.ID))
 }
 
 func (controller *ChatController) openRoomChatHandler(c *gin.Context) {

@@ -1,7 +1,7 @@
 package dto
 
 type IncomingLeaveProposalsForManagerResponse struct {
-	Id          string `json:"id,omitempty"`
+	ID          string `json:"id,omitempty"`
 	Avatar      string `json:"avatar,omitempty"`
 	FullName    string `json:"fullName,omitempty"`
 	RequestDate string `json:"requestDate,omitempty"`
@@ -16,7 +16,7 @@ type IncomingLeaveProposalsForManagerResponse struct {
 type IncomingLeaveProposalsForHrResponse IncomingLeaveProposalsForManagerResponse
 
 type IncomingLeaveProposalDetailForManagerResponse struct {
-	Id          string                                      `json:"id,omitempty"`
+	ID          string                                      `json:"id,omitempty"`
 	Avatar      string                                      `json:"avatar,omitempty"`
 	FullName    string                                      `json:"fullName,omitempty"`
 	Email       string                                      `json:"email,omitempty"`
@@ -32,7 +32,7 @@ type IncomingLeaveProposalDetailForManagerResponse struct {
 }
 
 type IncomingLeaveProposalDetailForHrResponse struct {
-	Id                string                                      `json:"id,omitempty"`
+	ID                string                                      `json:"id,omitempty"`
 	Avatar            string                                      `json:"avatar,omitempty"`
 	FullName          string                                      `json:"fullName,omitempty"`
 	Email             string                                      `json:"email,omitempty"`
@@ -53,7 +53,7 @@ type IncomingLeaveProposalDetailForHrResponse struct {
 }
 
 type IncomingLeaveProposalChildsDetailResponse struct {
-	Id                string  `json:"id,omitempty"`
+	ID                string  `json:"id,omitempty"`
 	From              string  `json:"from,omitempty"`
 	To                string  `json:"to,omitempty"`
 	Reason            string  `json:"reason,omitempty"`

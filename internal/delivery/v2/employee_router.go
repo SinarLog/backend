@@ -262,7 +262,7 @@ func (controller *EmployeeController) applyForLeaveHandler(c *gin.Context) {
 func (controller *EmployeeController) getMyBiodataHandler(c *gin.Context) {
 	user := c.Keys["user"].(entity.Employee)
 
-	res, err := controller.emplUC.RetrieveEmployeeBiodata(c.Request.Context(), user.Id)
+	res, err := controller.emplUC.RetrieveEmployeeBiodata(c.Request.Context(), user.ID)
 	if err != nil {
 		controller.SummariesUseCaseError(c, err)
 		return
@@ -320,7 +320,7 @@ func (controller *EmployeeController) getLeaveRequestById(c *gin.Context) {
 func (controller *EmployeeController) getDashboardAnalyticsHandler(c *gin.Context) {
 	user := c.Keys["user"].(entity.Employee)
 
-	res, err := controller.analUC.RetrieveDashboardAnalyticsForEmployeeById(c.Request.Context(), user.Id)
+	res, err := controller.analUC.RetrieveDashboardAnalyticsForEmployeeById(c.Request.Context(), user.ID)
 	if err != nil {
 		controller.SummariesUseCaseError(c, err)
 		return

@@ -1,7 +1,7 @@
 package dto
 
 type MyLeaveRequestListsResponse struct {
-	Id          string `json:"id,omitempty"`
+	ID          string `json:"id,omitempty"`
 	RequestDate string `json:"requestDate,omitempty"`
 	From        string `json:"from,omitempty"`
 	To          string `json:"to,omitempty"`
@@ -11,7 +11,7 @@ type MyLeaveRequestListsResponse struct {
 }
 
 type LeaveRequest struct {
-	Id          string `json:"id,omitempty"`
+	ID          string `json:"id,omitempty"`
 	From        string `json:"from,omitempty"`
 	To          string `json:"to,omitempty"`
 	Type        string `json:"type,omitempty"`
@@ -22,7 +22,7 @@ type LeaveRequest struct {
 }
 
 type MyLeaveRequestDetailResponse struct {
-	Id            string                     `json:"id,omitempty"`
+	ID            string                     `json:"id,omitempty"`
 	RequestDate   string                     `json:"requestDate,omitempty"`
 	From          string                     `json:"from,omitempty"`
 	To            string                     `json:"to,omitempty"`
@@ -46,7 +46,7 @@ type MyLeaveRequestDetailResponse struct {
 }
 
 type LeaveRequestDetailResponse struct {
-	Id            string                     `json:"id,omitempty"`
+	ID            string                     `json:"id,omitempty"`
 	Avatar        string                     `json:"avatar,omitempty"`
 	FullName      string                     `json:"fullName,omitempty"`
 	Email         string                     `json:"email,omitempty"`

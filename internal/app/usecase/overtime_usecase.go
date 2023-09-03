@@ -21,7 +21,7 @@ func (uc *attendanceUseCase) RetrieveMyOvertimeSubmissions(ctx context.Context, 
 	q.Pagination.Sort = "DESC"
 	q.Pagination.Order = "created_at"
 
-	overtimes, page, err := uc.attRepo.GetMyOvertimeSubmissions(ctx, employee.Id, q)
+	overtimes, page, err := uc.attRepo.GetMyOvertimeSubmissions(ctx, employee.ID, q)
 	if err != nil {
 		return nil, page, NewRepositoryError("Overtime", err)
 	}
@@ -38,7 +38,7 @@ func (uc *attendanceUseCase) SeeIncomingOvertimeSubmissionsForManager(ctx contex
 	q.Pagination.Sort = "DESC"
 	q.Pagination.Order = "created_at"
 
-	overtimes, page, err := uc.attRepo.GetIncomingOvertimeSubmissionsForManager(ctx, manager.Id, q)
+	overtimes, page, err := uc.attRepo.GetIncomingOvertimeSubmissionsForManager(ctx, manager.ID, q)
 	if err != nil {
 		return nil, page, NewRepositoryError("Overtime", err)
 	}
@@ -55,7 +55,7 @@ func (uc *attendanceUseCase) RetrieveOvertimeSubmission(ctx context.Context, ove
 }
 
 func (uc *attendanceUseCase) TakeActionOnOvertimeSubmissionByManager(ctx context.Context, manager entity.Employee, action vo.OvertimeSubmissionAction) error {
-	overtime, err := uc.attRepo.GetOvertimeById(ctx, action.Id)
+	overtime, err := uc.attRepo.GetOvertimeById(ctx, action.ID)
 	if err != nil {
 		NewRepositoryError("Overtime", err)
 	}
@@ -73,7 +73,7 @@ func (uc *attendanceUseCase) TakeActionOnOvertimeSubmissionByManager(ctx context
 	}
 
 	// Check if the overtime is intended for the current user
-	if *overtime.ManagerID != manager.Id {
+	if *overtime.ManagerID != manager.ID {
 		return NewDomainError("Overtime", fmt.Errorf("you are not allowed to process this overtime submission"))
 	}
 
@@ -99,7 +99,7 @@ func (uc *attendanceUseCase) RetrieveOvertimeSubmissionsHistoryForManager(ctx co
 		return nil, vo.PaginationDTOResponse{}, NewClientError("Overtime", err)
 	}
 
-	overtimes, page, err := uc.attRepo.GetOvertimeSubmissionHistoryForManager(ctx, manager.Id, q)
+	overtimes, page, err := uc.attRepo.GetOvertimeSubmissionHistoryForManager(ctx, manager.ID, q)
 	if err != nil {
 		return nil, page, NewRepositoryError("Overtime", err)
 	}
@@ -119,7 +119,7 @@ func (uc *attendanceUseCase) RetrieveMyEmployeesOvertime(ctx context.Context, ma
 	if employee.ManagerID == nil {
 		return nil, vo.PaginationDTOResponse{}, NewDomainError("Employee", fmt.Errorf("the employee you're requesting to view is not your staff"))
 	}
-	if *employee.ManagerID != manager.Id {
+	if *employee.ManagerID != manager.ID {
 		return nil, vo.PaginationDTOResponse{}, NewDomainError("Employee", fmt.Errorf("the employee you're requesting to view is not your staff"))
 	}
 

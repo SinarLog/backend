@@ -14,7 +14,7 @@ const (
 )
 
 type Configuration struct {
-	BaseModelId
+	BaseModelID
 
 	OfficeStartTime              time.Time
 	OfficeEndTime                time.Time
@@ -36,7 +36,7 @@ type Configuration struct {
 }
 
 type ConfigurationChangesLog struct {
-	BaseModelId
+	BaseModelID
 
 	ConfigurationID string `gorm:"type:uuid"`
 	Configuration   Configuration

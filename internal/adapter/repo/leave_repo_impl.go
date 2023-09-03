@@ -244,7 +244,7 @@ func (repo *leaveRepo) SaveProcessedLeaveByManager(ctx context.Context, leave en
 				leave.ApprovedByManager,
 				leave.ActionByManagerAt,
 				leave.RejectionReason,
-				leave.Id).Error; err != nil {
+				leave.ID).Error; err != nil {
 				tx.Rollback()
 				return err
 			}
@@ -266,7 +266,7 @@ func (repo *leaveRepo) SaveProcessedLeaveByManager(ctx context.Context, leave en
 				leave.Childs[i-1].ApprovedByManager,
 				leave.Childs[i-1].ActionByManagerAt,
 				leave.Childs[i-1].RejectionReason,
-				leave.Childs[i-1].Id).Error; err != nil {
+				leave.Childs[i-1].ID).Error; err != nil {
 				tx.Rollback()
 				return err
 			}
@@ -400,7 +400,7 @@ func (repo *leaveRepo) SaveProcessedLeaveByHr(ctx context.Context, leave entity.
 				leave.ActionByHrAt,
 				leave.RejectionReason,
 				leave.HrID,
-				leave.Id).Error; err != nil {
+				leave.ID).Error; err != nil {
 				tx.Rollback()
 				return err
 			}
@@ -425,7 +425,7 @@ func (repo *leaveRepo) SaveProcessedLeaveByHr(ctx context.Context, leave entity.
 					leave.Childs[i-1].ActionByHrAt,
 					leave.Childs[i-1].RejectionReason,
 					leave.HrID,
-					leave.Childs[i-1].Id).Error; err != nil {
+					leave.Childs[i-1].ID).Error; err != nil {
 					tx.Rollback()
 					return err
 				}
@@ -579,7 +579,7 @@ func (repo *leaveRepo) WhosTakingLeave(ctx context.Context, q vo.CommonQuery) (v
 			if leave.ApprovedByHr != nil && leave.ApprovedByManager != nil {
 				if *leave.ApprovedByHr && *leave.ApprovedByManager {
 					elements = append(elements, vo.WhosTakingLeaveElements{
-						Id:       v,
+						ID:       v,
 						Avatar:   leave.Employee.Avatar,
 						FullName: leave.Employee.FullName,
 						Role:     leave.Employee.Role.Code,

@@ -51,7 +51,7 @@ ACTOR: STAFF and MANAGER
 
 func (uc *attendanceUseCase) RequestClockIn(ctx context.Context, employee entity.Employee) error {
 	// Checks if the employee has clocked in today
-	hasClockedIn, err := uc.attRepo.EmployeeHasClockedInToday(ctx, employee.Id)
+	hasClockedIn, err := uc.attRepo.EmployeeHasClockedInToday(ctx, employee.ID)
 	if err == nil {
 		if hasClockedIn {
 			return NewDomainError("Attendance", fmt.Errorf("employee has clocked in for today"))
@@ -61,7 +61,7 @@ func (uc *attendanceUseCase) RequestClockIn(ctx context.Context, employee entity
 	}
 
 	// Checks if the employee is on leave
-	onLeave, err := uc.leaveRepo.EmployeeIsOnLeaveToday(ctx, employee.Id)
+	onLeave, err := uc.leaveRepo.EmployeeIsOnLeaveToday(ctx, employee.ID)
 	if err != nil {
 		return NewRepositoryError("Leave", utils.AddError(fmt.Errorf("unable to identify if the employee today is on leave"), err))
 	}
@@ -94,7 +94,7 @@ func (uc *attendanceUseCase) RequestClockIn(ctx context.Context, employee entity
 
 	// Generate OTP
 	otp, timestamp, exp := uc.dkService.GenerateOTP()
-	if err := uc.attRepo.SaveClockInOTPTimestamp(ctx, employee.Id, timestamp, exp); err != nil {
+	if err := uc.attRepo.SaveClockInOTPTimestamp(ctx, employee.ID, timestamp, exp); err != nil {
 		return NewRepositoryError("Attendance", fmt.Errorf("unable to save otp: %w", err))
 	}
 
@@ -112,7 +112,7 @@ func (uc *attendanceUseCase) RequestClockIn(ctx context.Context, employee entity
 
 func (uc *attendanceUseCase) ClockIn(ctx context.Context, employee entity.Employee, req vo.ClockInRequest) error {
 	// Checks whether employee has clocked in today
-	hasClockedIn, err := uc.attRepo.EmployeeHasClockedInToday(ctx, employee.Id)
+	hasClockedIn, err := uc.attRepo.EmployeeHasClockedInToday(ctx, employee.ID)
 	if err == nil {
 		if hasClockedIn {
 			return NewDomainError("Attendance", fmt.Errorf("employee has clocked in for today"))
@@ -122,7 +122,7 @@ func (uc *attendanceUseCase) ClockIn(ctx context.Context, employee entity.Employ
 	}
 
 	// Validate OTP
-	timestamp, err := uc.attRepo.GetClockInOTPTimestamp(ctx, employee.Id)
+	timestamp, err := uc.attRepo.GetClockInOTPTimestamp(ctx, employee.ID)
 	if err == nil {
 		match := uc.dkService.VerifyOTP(req.OTP, timestamp)
 		if !match {
@@ -140,7 +140,7 @@ func (uc *attendanceUseCase) ClockIn(ctx context.Context, employee entity.Employ
 
 	// Create and validate attendance
 	attendance := entity.Attendance{
-		EmployeeID:    employee.Id,
+		EmployeeID:    employee.ID,
 		Employee:      employee,
 		ClockInAt:     time.Now().In(utils.CURRENT_LOC),
 		DoneForTheDay: false,
@@ -161,7 +161,7 @@ func (uc *attendanceUseCase) ClockIn(ctx context.Context, employee entity.Employ
 	}
 
 	// Set employee to available
-	if err := uc.emplRepo.SetEmployeeStatusTo(ctx, employee.Id, entity.AVAILABLE); err != nil {
+	if err := uc.emplRepo.SetEmployeeStatusTo(ctx, employee.ID, entity.AVAILABLE); err != nil {
 		return NewErrorWithReport(
 			"Employee",
 			500,
@@ -175,7 +175,7 @@ func (uc *attendanceUseCase) ClockIn(ctx context.Context, employee entity.Employ
 }
 
 func (uc *attendanceUseCase) RetrieveTodaysAttendance(ctx context.Context, employee entity.Employee) (entity.Attendance, error) {
-	attendance, err := uc.attRepo.GetTodaysAttendanceByEmployeeId(ctx, employee.Id)
+	attendance, err := uc.attRepo.GetTodaysAttendanceByEmployeeId(ctx, employee.ID)
 	if err != nil {
 		return entity.Attendance{}, NewRepositoryError("Attendance", err)
 	}
@@ -190,7 +190,7 @@ func (uc *attendanceUseCase) RetrieveTodaysAttendance(ctx context.Context, emplo
 // only staff are able to have overtime.
 func (uc *attendanceUseCase) RequestClockOut(ctx context.Context, employee entity.Employee) (entity.OvertimeOnAttendanceReport, error) {
 	// Checks if there are any active attendance
-	hasActiveAttendance, err := uc.attRepo.EmployeeHasActiveAttendance(ctx, employee.Id)
+	hasActiveAttendance, err := uc.attRepo.EmployeeHasActiveAttendance(ctx, employee.ID)
 	if err == nil {
 		if !hasActiveAttendance {
 			return entity.OvertimeOnAttendanceReport{}, NewClientError("Attendance", fmt.Errorf("you have no active attendance"))
@@ -205,7 +205,7 @@ func (uc *attendanceUseCase) RequestClockOut(ctx context.Context, employee entit
 	}
 
 	// Query the attendance
-	attendance, err := uc.attRepo.GetActiveAttendanceByEmployeeId(ctx, employee.Id)
+	attendance, err := uc.attRepo.GetActiveAttendanceByEmployeeId(ctx, employee.ID)
 	if err != nil {
 		return entity.OvertimeOnAttendanceReport{}, NewRepositoryError("Attendance", err)
 	}
@@ -221,7 +221,7 @@ func (uc *attendanceUseCase) RequestClockOut(ctx context.Context, employee entit
 
 func (uc *attendanceUseCase) ClockOut(ctx context.Context, employee entity.Employee, payload vo.ClockOutPayload) error {
 	// Checks if there are any active attendance
-	hasActiveAttendance, err := uc.attRepo.EmployeeHasActiveAttendance(ctx, employee.Id)
+	hasActiveAttendance, err := uc.attRepo.EmployeeHasActiveAttendance(ctx, employee.ID)
 	if err == nil {
 		if !hasActiveAttendance {
 			return NewClientError("Attendance", fmt.Errorf("you have no active attendance"))
@@ -231,7 +231,7 @@ func (uc *attendanceUseCase) ClockOut(ctx context.Context, employee entity.Emplo
 	}
 
 	// Query the attendance
-	attendance, err := uc.attRepo.GetActiveAttendanceByEmployeeId(ctx, employee.Id)
+	attendance, err := uc.attRepo.GetActiveAttendanceByEmployeeId(ctx, employee.ID)
 	if err != nil {
 		return NewRepositoryError("Attendance", err)
 	}
@@ -261,7 +261,7 @@ func (uc *attendanceUseCase) ClockOut(ctx context.Context, employee entity.Emplo
 	// If should create an overtime record and the user confirms and the actor is a staff...
 	if report.ShouldCreateOvertimeRecord() && payload.Confirmation && employee.ManagerID != nil {
 		attendance.Overtime = &entity.Overtime{
-			AttendanceID: attendance.Id,
+			AttendanceID: attendance.ID,
 			Duration:     int(report.OvertimeAcceptedDuration),
 			Reason:       payload.Reason,
 			ManagerID:    attendance.Employee.ManagerID,
@@ -304,7 +304,7 @@ func (uc *attendanceUseCase) ClockOut(ctx context.Context, employee entity.Emplo
 }
 
 func (uc *attendanceUseCase) RetrieveMyAttendanceHistory(ctx context.Context, employee entity.Employee, q vo.HistoryAttendancesQuery) ([]entity.Attendance, vo.PaginationDTOResponse, error) {
-	attendances, page, err := uc.attRepo.GetMyAttendancesHistory(ctx, employee.Id, q)
+	attendances, page, err := uc.attRepo.GetMyAttendancesHistory(ctx, employee.ID, q)
 	if err != nil {
 		return nil, page, NewRepositoryError("Attendances", err)
 	}
@@ -388,7 +388,7 @@ func (uc *attendanceUseCase) RetrieveMyStaffsAttendanceHistory(ctx context.Conte
 	}
 
 	q.CommonQuery.Pagination.Order = "clock_in_at"
-	attendances, page, err := uc.attRepo.GetStaffsAttendancesHistory(ctx, manager.Id, q)
+	attendances, page, err := uc.attRepo.GetStaffsAttendancesHistory(ctx, manager.ID, q)
 	if err != nil {
 		return nil, page, NewRepositoryError("Attendance", err)
 	}
@@ -409,7 +409,7 @@ func (uc *attendanceUseCase) RetrieveStaffAttendanceHistory(ctx context.Context,
 	if employee.ManagerID == nil {
 		return nil, vo.PaginationDTOResponse{}, NewDomainError("Employee", fmt.Errorf("the employee you're requesting to view is not your staff"))
 	}
-	if *employee.ManagerID != manager.Id {
+	if *employee.ManagerID != manager.ID {
 		return nil, vo.PaginationDTOResponse{}, NewDomainError("Employee", fmt.Errorf("the employee you're requesting to view is not your staff"))
 	}
 

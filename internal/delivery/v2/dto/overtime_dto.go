@@ -22,7 +22,7 @@ type OvertimeOnAttendanceReportResponse struct {
 }
 
 type IncomingOvertimeSubmissionsForManagerResponse struct {
-	Id       string `json:"id,omitempty"`
+	ID       string `json:"id,omitempty"`
 	Avatar   string `json:"avatar,omitempty"`
 	FullName string `json:"fullName,omitempty"`
 	Date     string `json:"date,omitempty"`
@@ -42,7 +42,7 @@ type OvertimeSubmissionDetailResponse struct {
 }
 
 type MyOvertimeSubmissionResponse struct {
-	Id          string `json:"id,omitempty"`
+	ID          string `json:"id,omitempty"`
 	RequestDate string `json:"requestDate,omitempty"`
 	Duration    string `json:"duration,omitempty"`
 	Status      string `json:"status,omitempty"`

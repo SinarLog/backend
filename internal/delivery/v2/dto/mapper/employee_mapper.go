@@ -66,7 +66,7 @@ func MapEmployeeListToBriefEmployeeListResponse(employees []entity.Employee) []d
 
 	for _, v := range employees {
 		res = append(res, dto.BriefEmployeeListResponse{
-			Id:       v.Id,
+			ID:       v.ID,
 			FullName: v.FullName,
 			Status:   string(v.Status),
 			Email:    v.Email,
@@ -84,7 +84,7 @@ func MapManagersListToResponse(managers []entity.Employee) []dto.BriefEmployeeLi
 
 	for _, v := range managers {
 		res = append(res, dto.BriefEmployeeListResponse{
-			Id:       v.Id,
+			ID:       v.ID,
 			FullName: v.FullName,
 			Email:    v.Email,
 		})
@@ -118,7 +118,7 @@ func MapEmployeeLeaveQuotaToResponse(quota entity.EmployeeLeavesQuota) dto.Emplo
 
 func MapEmployeeEmergencyContactToResponse(contact entity.EmployeesEmergencyContact) dto.EmployeeEmergencyContactResponse {
 	return dto.EmployeeEmergencyContactResponse{
-		Id:          contact.Id,
+		ID:          contact.ID,
 		EmployeeID:  contact.EmployeeID,
 		FullName:    contact.FullName,
 		Relation:    string(contact.Relation),
@@ -131,9 +131,9 @@ func MapEmployeeChangesLogToResponse(logs []entity.EmployeeDataHistoryLog) []dto
 
 	for _, v := range logs {
 		res = append(res, dto.EmployeeChangesLogs{
-			Id: v.Id,
+			ID: v.ID,
 			UpdatedBy: dto.BriefEmployeeListResponse{
-				Id:       v.UpdatedByID,
+				ID:       v.UpdatedByID,
 				FullName: v.UpdatedBy.FullName,
 				Email:    v.UpdatedBy.Email,
 				Avatar:   v.UpdatedBy.Avatar,
@@ -149,7 +149,7 @@ func MapEmployeeChangesLogToResponse(logs []entity.EmployeeDataHistoryLog) []dto
 
 func MapEmployeeFullProfileToResponse(employee entity.Employee) dto.EmployeeFullProfileResponse {
 	res := dto.EmployeeFullProfileResponse{
-		Id:           employee.Id,
+		ID:           employee.ID,
 		FullName:     employee.FullName,
 		Email:        employee.Email,
 		ContractType: string(employee.ContractType),
@@ -176,7 +176,7 @@ func MapEmployeeFullProfileToResponse(employee entity.Employee) dto.EmployeeFull
 
 	if employee.ManagerID != nil && employee.Manager != nil {
 		manager := dto.BriefEmployeeListResponse{
-			Id:       *employee.ManagerID,
+			ID:       *employee.ManagerID,
 			FullName: employee.Manager.FullName,
 			Status:   string(employee.Manager.Status),
 			Email:    employee.Manager.Email,

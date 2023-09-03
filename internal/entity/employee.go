@@ -55,7 +55,7 @@ const (
 )
 
 type Employee struct {
-	BaseModelId
+	BaseModelID
 
 	FullName     string       `gorm:"type:varchar(155)"`
 	Email        string       `gorm:"type:varchar(150);index:,unique,type:btree"`
@@ -73,9 +73,9 @@ type Employee struct {
 
 	ManagerID    *string `gorm:"type:uuid"`
 	Manager      *Employee
-	CreatedById  *string `gorm:"type:uuid;default:null"`
+	CreatedByID  *string `gorm:"type:uuid;default:null"`
 	CreatedBy    *Employee
-	ResignedById *string `gorm:"type:uuid;default:null"`
+	ResignedByID *string `gorm:"type:uuid;default:null"`
 	ResignedBy   *Employee
 	ResignedAt   *time.Time
 	RoleID       string `gorm:"type:uuid"`
@@ -88,7 +88,7 @@ type Employee struct {
 }
 
 type EmployeeBiodata struct {
-	BaseModelId
+	BaseModelID
 
 	EmployeeID    string   `gorm:"type:uuid,uniqueIndex"`
 	NIK           string   `gorm:"type:varchar(255);index:,unique,type:btree"`
@@ -105,7 +105,7 @@ type EmployeeBiodata struct {
 }
 
 type EmployeesEmergencyContact struct {
-	BaseModelId
+	BaseModelID
 
 	EmployeeID  string `gorm:"type:uuid"`
 	Employee    Employee
@@ -118,7 +118,7 @@ type EmployeesEmergencyContact struct {
 }
 
 type EmployeeLeavesQuota struct {
-	BaseModelId
+	BaseModelID
 
 	EmployeeID    string `gorm:"type:uuid"`
 	YearlyCount   int    `gorm:"default:0"`
@@ -130,7 +130,7 @@ type EmployeeLeavesQuota struct {
 }
 
 type EmployeeDataHistoryLog struct {
-	BaseModelId
+	BaseModelID
 
 	EmployeeID  string `gorm:"type:uuid"`
 	Employee    Employee
@@ -189,7 +189,7 @@ func (v Employee) ValidateNewEmployee() error {
 				return validation.Validate(v, is.UUIDv4)
 			}),
 		).Else(validation.Nil.Error("a non-staff role must not have a manager"))),
-		validation.Field(&v.CreatedById, validation.Required, is.UUIDv4),
+		validation.Field(&v.CreatedByID, validation.Required, is.UUIDv4),
 		validation.Field(&v.EmployeeBiodata),
 		validation.Field(&v.EmployeesEmergencyContacts),
 	); err != nil {

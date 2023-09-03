@@ -12,7 +12,7 @@ import (
 func MapOpenChatResponse(room entity.Room, chats []entity.Chat) dto.OpenChatResponse {
 	res := dto.OpenChatResponse{
 		Room: dto.RoomResponse{
-			Id:           room.Id.Hex(),
+			ID:           room.ID.Hex(),
 			Participants: room.Participants,
 			CreatedAt:    room.CreatedAt.Time().In(utils.CURRENT_LOC).Format(time.RFC1123),
 		},
@@ -34,7 +34,7 @@ func MapOpenChatRoomRequestToDomain(req vo.OpenChatRequest) entity.Room {
 
 func MapChatDomainToResponse(chat entity.Chat) dto.ChatResponse {
 	return dto.ChatResponse{
-		Id:        chat.Id.Hex(),
+		ID:        chat.ID.Hex(),
 		RoomId:    chat.RoomId.Hex(),
 		Sender:    chat.Sender,
 		Message:   chat.Message,
@@ -46,7 +46,7 @@ func MapChatDomainToResponse(chat entity.Chat) dto.ChatResponse {
 
 func MapFriendsList(friends []entity.Employee, userId string) []dto.BriefEmployeeListResponse {
 	for i, v := range friends {
-		if v.Id == userId {
+		if v.ID == userId {
 			friends = append(friends[:i], friends[i+1:]...)
 			break
 		}

@@ -64,9 +64,9 @@ func (uc *configUseCase) changeCompanyConfigNextDay(ctx context.Context, hr enti
 	now := time.Now().In(utils.CURRENT_LOC)
 
 	logs.Configuration = config
-	logs.ConfigurationID = config.Id
+	logs.ConfigurationID = config.ID
 	logs.UpdatedBy = hr
-	logs.UpdatedByID = hr.Id
+	logs.UpdatedByID = hr.ID
 	logs.WhenApplied = time.Date(now.Year(), now.Month(), now.Day()+1, 0, 0, 0, 0, utils.CURRENT_LOC)
 
 	// Start time
@@ -115,9 +115,9 @@ func (uc *configUseCase) changeCompanyConfigNextMonth(ctx context.Context, hr en
 	now := time.Now().In(utils.CURRENT_LOC)
 
 	logs.Configuration = config
-	logs.ConfigurationID = config.Id
+	logs.ConfigurationID = config.ID
 	logs.UpdatedBy = hr
-	logs.UpdatedByID = hr.Id
+	logs.UpdatedByID = hr.ID
 	logs.WhenApplied = time.Date(now.Year(), now.Month()+1, 1, 0, 0, 0, 0, utils.CURRENT_LOC)
 
 	if config.AcceptanceLeaveInterval != payload.AcceptanceLeaveInterval {

@@ -3,8 +3,8 @@ package vo
 type WhosTakingLeaveList map[string][]WhosTakingLeaveElements
 
 type WhosTakingLeaveElements struct {
-	// Leave's Id
-	Id string `json:"id,omitempty"`
+	// Leave's ID
+	ID string `json:"id,omitempty"`
 	// Leave Type
 	Type string `json:"type,omitempty"`
 	// Employee's avatar taking leave that day

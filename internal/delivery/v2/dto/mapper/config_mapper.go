@@ -42,9 +42,9 @@ func MapConfigChangesLogToResponse(logs []entity.ConfigurationChangesLog) []dto.
 
 	for _, v := range logs {
 		res = append(res, dto.ConfigChangesLogsResponse{
-			Id: v.Id,
+			ID: v.ID,
 			UpdatedBy: dto.BriefEmployeeListResponse{
-				Id:       v.UpdatedByID,
+				ID:       v.UpdatedByID,
 				FullName: v.UpdatedBy.FullName,
 				Email:    v.UpdatedBy.Email,
 				Avatar:   v.UpdatedBy.Avatar,

@@ -18,7 +18,7 @@ func MapIncomingLeaveProposalsForManagerResponse(leaves []entity.Leave) []dto.In
 
 	for _, v := range leaves {
 		d := dto.IncomingLeaveProposalsForManagerResponse{
-			Id:          v.Id,
+			ID:          v.ID,
 			Avatar:      v.Employee.Avatar,
 			FullName:    v.Employee.FullName,
 			RequestDate: v.CreatedAt.In(utils.CURRENT_LOC).Format(time.DateOnly),
@@ -44,7 +44,7 @@ func MapIncomingLeaveProposalsForHrResponse(leaves []entity.Leave) []dto.Incomin
 
 	for _, v := range leaves {
 		d := dto.IncomingLeaveProposalsForHrResponse{
-			Id:          v.Id,
+			ID:          v.ID,
 			Avatar:      v.Employee.Avatar,
 			FullName:    v.Employee.FullName,
 			RequestDate: v.CreatedAt.In(utils.CURRENT_LOC).Format(time.DateOnly),
@@ -67,7 +67,7 @@ func MapIncomingLeaveProposalsForHrResponse(leaves []entity.Leave) []dto.Incomin
 
 func MapIncomingLeaveProposalDetailForManagerResponse(leave entity.Leave) dto.IncomingLeaveProposalDetailForManagerResponse {
 	res := dto.IncomingLeaveProposalDetailForManagerResponse{
-		Id:          leave.Id,
+		ID:          leave.ID,
 		Avatar:      leave.Employee.Avatar,
 		FullName:    leave.Employee.FullName,
 		Email:       leave.Employee.Email,
@@ -83,7 +83,7 @@ func MapIncomingLeaveProposalDetailForManagerResponse(leave entity.Leave) dto.In
 
 	for _, v := range leave.Childs {
 		d := dto.IncomingLeaveProposalChildsDetailResponse{
-			Id:       v.Id,
+			ID:       v.ID,
 			From:     v.From.In(utils.CURRENT_LOC).Format(time.DateOnly),
 			To:       v.To.In(utils.CURRENT_LOC).Format(time.DateOnly),
 			Reason:   v.Reason,
@@ -100,7 +100,7 @@ func MapIncomingLeaveProposalDetailForManagerResponse(leave entity.Leave) dto.In
 
 func MapIncomingLeaveProposalDetailForHrResponse(leave entity.Leave) dto.IncomingLeaveProposalDetailForHrResponse {
 	res := dto.IncomingLeaveProposalDetailForHrResponse{
-		Id:                leave.Id,
+		ID:                leave.ID,
 		Avatar:            leave.Employee.Avatar,
 		FullName:          leave.Employee.FullName,
 		Email:             leave.Employee.Email,
@@ -122,7 +122,7 @@ func MapIncomingLeaveProposalDetailForHrResponse(leave entity.Leave) dto.Incomin
 
 	if leave.Manager != nil {
 		res.Manager = &dto.BriefEmployeeListResponse{
-			Id:       leave.Manager.Id,
+			ID:       leave.Manager.ID,
 			FullName: leave.Manager.FullName,
 			Email:    leave.Manager.Email,
 			Avatar:   leave.Manager.Avatar,
@@ -131,7 +131,7 @@ func MapIncomingLeaveProposalDetailForHrResponse(leave entity.Leave) dto.Incomin
 
 	for _, v := range leave.Childs {
 		c := dto.IncomingLeaveProposalChildsDetailResponse{
-			Id:                v.Id,
+			ID:                v.ID,
 			From:              v.From.In(utils.CURRENT_LOC).Format(time.DateOnly),
 			To:                v.To.In(utils.CURRENT_LOC).Format(time.DateOnly),
 			Reason:            v.Reason,

@@ -10,7 +10,7 @@ import (
 )
 
 type Attendance struct {
-	BaseModelId
+	BaseModelID
 
 	EmployeeID          string `gorm:"type:uuid"`
 	Employee            Employee
